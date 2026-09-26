@@ -22,7 +22,7 @@ Premium Android-first command center for an engine-agnostic AI game production f
 - Local Models / GGUF
 - Hugging Face
 - Provider Router / model cascade
-- Game Knowledge Hub
+- Game Knowledge Hub (source tracking, evidence, tags, notes and project-linked knowledge retrieval)
 - GitHub integration
 - Cloud Workspace
 - Synthetic Playtest Farm
@@ -65,6 +65,7 @@ The engine-neutral layer is now executable at the contract level:
 - [Asset Factory](docs/ASSET-FACTORY.md)
 - [3D Asset Factory](docs/3D-ASSET-FACTORY.md)
 - [AI Model Factory](docs/AI-MODEL-FACTORY.md)
+- [Game Knowledge Hub](docs/GAME-KNOWLEDGE-HUB.md)
 - [Hugging Face Hub](docs/HUGGINGFACE-HUB.md)
 - [Unity AI Adapter](docs/UNITY-AI-ADAPTER.md)
 - [Game Research Lab](docs/GAME-RESEARCH-LAB.md)
