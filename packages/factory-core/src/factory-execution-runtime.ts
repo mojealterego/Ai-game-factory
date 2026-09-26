@@ -205,4 +205,26 @@ export class FactoryExecutionRuntime {
     }
     return markFactoryStage(project, stage, "running", [], [finalJob.id], [provider.id]);
   }
+  private async waitForWorker(worker: CloudWorker, job: Job, timeoutMs: number): Promise<Job> {
+    const deadline = Date.now() + timeoutMs;
+    let current = job;
+    while (current.status === "queued" || current.status === "running") {
+      if (Date.now() >= deadline) return current;
+      await new Promise(resolve => setTimeout(resolve, 50));
+      current = await worker.getJob(job.id);
+    }
+    return current;
+  }
+
+  private async waitForProvider(provider: ProviderAdapter, job: Job, timeoutMs: number): Promise<Job> {
+    const deadline = Date.now() + timeoutMs;
+    let current = job;
+    while (current.status === "queued" || current.status === "running") {
+      if (Date.now() >= deadline) return current;
+      await new Promise(resolve => setTimeout(resolve, 50));
+      current = await provider.getJob(job.id);
+    }
+    return current;
+  }
+
 }
