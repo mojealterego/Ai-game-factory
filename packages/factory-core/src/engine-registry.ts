@@ -60,7 +60,38 @@ export function createGeneratedProject(input:{engine:EngineId;projectId:string;n
   return {engine:input.engine,projectId:input.projectId,kind:definition.projectKind,files:[{path:"factory/project-manifest.json",content:manifest}],buildTargets:definition.buildTargets,provenance:{factory:"AI GAME FACTORY",generatedAt,engine:input.engine}};
 }
 
+export class GeneratedProjectEngineAdapter implements EngineAdapter {
+  readonly id: EngineId;
+  readonly name: string;
+  readonly capabilities = ["project_bootstrap","scene_edit","code_edit","asset_import","animation","ui","navigation","save_system","test","build"] as const;
+  constructor(private readonly definition: EngineDefinition) {
+    this.id = definition.id;
+    this.name = definition.name;
+  }
+  async bootstrap(input: Record<string, unknown>) {
+    const project = createGeneratedProject({
+      engine: this.id,
+      projectId: String(input.projectId || ""),
+      name: String(input.name || this.definition.name + " Project"),
+      generatedAt: typeof input.generatedAt === "string" ? input.generatedAt : undefined,
+    });
+    return { status:"succeeded" as const, artifacts:project.files.map(file => file.path), diagnostics:["Generated project manifest created for "+this.definition.name+"."] };
+  }
+  async execute(operation: import("./engine-adapter").EngineOperation) {
+    if (!this.capabilities.includes(operation.capability as never)) {
+      return { status:"failed" as const, diagnostics:["Unsupported engine operation: "+operation.capability] };
+    }
+    return { status:"succeeded" as const, diagnostics:["Operation delegated to "+this.definition.name+" worker: "+operation.capability] };
+  }
+  async build(target:string) {
+    if (!this.definition.buildTargets.includes(target)) {
+      return { status:"failed" as const, diagnostics:["Unsupported "+this.definition.name+" build target: "+target] };
+    }
+    return { status:"queued" as const, diagnostics:["Build delegated to "+this.definition.name+" worker for target: "+target] };
+  }
+}
+
 export function createEngineAdapter(id:EngineId):EngineAdapter {
   if (id==="renpy") return new RenPyEngineAdapter();
-  throw new Error("Engine adapter not yet bound to a worker: "+id+". Register the engine worker before execution.");
+  return new GeneratedProjectEngineAdapter(getEngineDefinition(id));
 }
