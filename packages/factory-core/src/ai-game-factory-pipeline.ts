@@ -65,7 +65,7 @@ export const FACTORY_INTEGRATION_SURFACE = {
   storyWorld: ["AI Story World Engine", "Story Generator", "Game Knowledge Hub"],
   cinematicDrama: ["Cinematic Narrative Engine", "Cinematic Narrative Studio", "Continuity Doctor", "Camera/Cinematics runtime"],
   shared: [
-    "Asset Factory", "3D Asset Pipeline", "Audio/Dubbing", "GGUF/Local Models",
+    "Asset Factory", "3D Asset Factory", "3D Asset Pipeline", "Audio/Dubbing", "GGUF/Local Models",
     "Hugging Face", "AI Agent OS A00-A61", "GitHub", "Cloud Workspace",
     "Build Center", "QA", "Security/IP", "No-Code Agent Builder", "Android Control Center"
   ]
