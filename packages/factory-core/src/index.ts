@@ -35,3 +35,5 @@ export * from "./android-control-center";
 export * from "./ai-game-builder-engine";
 export * from "./reference-ideation-engine";
 export * from "./story-world-engine";
+export * from "./ludo-api-mcp-adapter";
+export * from "./ai-game-factory-pipeline";
