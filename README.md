@@ -36,7 +36,7 @@ Core loop:
 
 Intent -> Research -> Game DNA -> GDD -> Agents -> Systems -> Code -> Assets -> Engine -> Playtest -> QA -> Build -> Release
 
-Engine adapters include Unreal, Unity, Godot, Cocos Creator, Defold, Stride, MonoGame, Bevy, O3DE, HTML/Web and future runtimes.
+Engine adapters include Unreal, Unity, Godot, Cocos Creator, Defold, Stride, MonoGame, Bevy, O3DE, Ren'Py, HTML/Web and future runtimes.
 
 ## Reference capability families
 
