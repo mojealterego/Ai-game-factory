@@ -12,7 +12,7 @@ const assert = (condition: boolean, message: string) => {
 };
 
 export async function runQAContractTests(): Promise<void> {
-  assert(QA_CHECKS.length === 14, "QA must contain all 14 requested check families");
+  assert(QA_CHECKS.length === 16, "QA must contain all 16 requested check families");
   assert(QA_CHECKS.includes("static_analysis"), "static analysis gate missing");
   assert(QA_CHECKS.includes("code_validation"), "code validation gate missing");
   assert(QA_CHECKS.includes("asset_validation"), "asset validation gate missing");
@@ -31,7 +31,7 @@ export async function runQAContractTests(): Promise<void> {
   assert(QA_CHECKS.includes("regression_tests"), "regression gate missing");
 
   const plan = createQAPlan("demo", "build-1");
-  assert(plan.gates.length === 14, "default QA plan must contain 14 gates");
+  assert(plan.gates.length === 16, "default QA plan must contain 14 gates");
   assert(plan.gates.every(g => g.required), "release QA gates must be required by default");
 
   const pass: QAResult = {
@@ -59,7 +59,7 @@ export async function runQAContractTests(): Promise<void> {
 
   const suite = await runQASuite({ projectId: "demo", buildId: "build-1", handlers });
   assert(suite.ready === true, "complete passing QA suite must be release-ready");
-  assert(suite.results.length === 14, "complete suite must return all QA results");
+  assert(suite.results.length === 16, "complete suite must return all QA results");
 }
 
 runQAContractTests();
