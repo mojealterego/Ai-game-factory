@@ -92,7 +92,7 @@ export class GitHubActionsFetchTransport implements GitHubActionsTransport {
 }
 
 export class GitHubActionsBuildFarm implements BuildFarmAdapter {
-  private readonly targets = new Map<string, BuildTarget>();
+  private readonly targetByBuildId = new Map<string, BuildTarget>();
   readonly id = "github-actions";
   readonly targets: BuildTarget[] = ["android-apk", "android-aab", "web", "windows", "linux", "macos", "ios"];
 
@@ -105,7 +105,7 @@ export class GitHubActionsBuildFarm implements BuildFarmAdapter {
       inputs: { projectId: request.projectId, engine: request.engine, target: request.target, configuration: request.configuration, sign: String(request.sign) }
     });
     const buildId = String(dispatched.runId ?? crypto.randomUUID());
-    this.targets.set(buildId, request.target);
+    this.targetByBuildId.set(buildId, request.target);
     return { buildId, projectId: request.projectId, target: request.target, status: "queued", workflowUrl: dispatched.runUrl };
   }
 
@@ -122,7 +122,7 @@ export class GitHubActionsBuildFarm implements BuildFarmAdapter {
       const run = await this.transport.getWorkflowRun(runId);
       if (run.status === "completed") {
         if (run.conclusion !== "success") return { id: buildId, target: "custom", status: "failed", verified: false };
-        const target = this.targets.get(buildId) ?? "custom";
+        const target = this.targetByBuildId.get(buildId) ?? "custom";
         const artifacts = this.transport.getArtifacts ? await this.transport.getArtifacts(runId) : [];
         const artifact = artifacts.find(a => !a.expired);
         if (!artifact) return { id: buildId, target, status: "failed", verified: false, buildRunId: buildId, evidence: ["BUILD_ARTIFACT_NOT_FOUND"] };
