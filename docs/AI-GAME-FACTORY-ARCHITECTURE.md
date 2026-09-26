@@ -196,3 +196,12 @@ The shared asset layer now includes the complete game-ready 3D Asset Factory: te
 The Asset Optimization Agent selects mobile/web/PC/console/VR/custom profiles before engine import. Its output includes polygon budget, texture resolution, LOD budgets, collision policy, material complexity, draw-call budget and target memory.
 
 Tripo is integrated through an adapter contract for its asynchronous API v3 operations. The Factory remains provider-agnostic and does not expose provider credentials to Android clients.
+
+
+## Unity Engine Adapter
+
+Unity is integrated as a first-class Engine Adapter, not as a copied implementation. The adapter exposes project-aware context, scene/GameObject/component/package/script/prefab/material/animation/terrain inspection, Assistant/Code Agent/Scene Agent delegation, Unity Generators, MCP, AI Gateway, Sentis runtime boundaries and Build Adapter delegation.
+
+Asset generation remains engine-neutral through AssetRequest -> AssetRouter. Unity-native generators are one route alongside Tripo, OpenAI, Gemini, Stability, Replicate, Fal, Hugging Face, Local GGUF and custom providers.
+
+A live Unity operation requires an actual Unity 6+ environment and applicable Unity packages/access. The Factory records delegated/queued work until a real Unity worker/editor returns execution evidence.
