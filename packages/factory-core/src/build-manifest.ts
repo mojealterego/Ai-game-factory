@@ -2,7 +2,7 @@ export interface BuildManifest {
   schemaVersion: "1.0";
   projectId: string;
   engine: { id: string; version?: string };
-  target: "android-apk" | "android-aab" | "web" | "windows" | "linux";
+  target: "android-apk" | "android-aab" | "web" | "windows" | "linux" | "macos" | "ios" | (string & {});
   variant: "debug" | "release";
   signing?: { keyAlias: string; secretRef: string };
   minSdk?: number;
