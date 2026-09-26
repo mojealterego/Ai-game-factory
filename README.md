@@ -18,6 +18,7 @@ Premium Android-first command center for an engine-agnostic AI game production f
 - Unity AI adapter
 - Audio / Dubbing Factory (music, soundtrack, ambient, SFX, footsteps, UI sounds, cinematic sound, voice generation, dubbing, lip-sync, dialogue timing, multilingual voice and capability-based provider routing)
 - AI Model Factory (cloud providers, generative-media providers, Hugging Face and local GGUF lifecycle/routing)
+- Hugging Face Hub pipeline (Search → Model Card → Files → Compatibility → License → Quantization → Download → Verify → Import → Register → Activate)
 - Local Models / GGUF
 - Hugging Face
 - Provider Router / model cascade
@@ -64,6 +65,7 @@ The engine-neutral layer is now executable at the contract level:
 - [Asset Factory](docs/ASSET-FACTORY.md)
 - [3D Asset Factory](docs/3D-ASSET-FACTORY.md)
 - [AI Model Factory](docs/AI-MODEL-FACTORY.md)
+- [Hugging Face Hub](docs/HUGGINGFACE-HUB.md)
 - [Unity AI Adapter](docs/UNITY-AI-ADAPTER.md)
 - [Game Research Lab](docs/GAME-RESEARCH-LAB.md)
 - [Native Android architecture](docs/ANDROID-NATIVE.md)
