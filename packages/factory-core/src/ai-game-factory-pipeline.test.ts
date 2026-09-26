@@ -29,7 +29,7 @@ export function runAIGameFactoryPipelineContractTests(): void {
   assert(blocked, "downstream stage must be blocked until dependencies are complete");
 
   const ideated = prepareGameIdeation(next, {
-    projectId: next.projectId, theme: "abandoned hospital",
+    projectId: researched.projectId, theme: "abandoned hospital",
     genres: ["horror", "survival"], mechanics: ["decision system", "procedural events"],
     references: [], platform: "android", batchSize: 3
   });
