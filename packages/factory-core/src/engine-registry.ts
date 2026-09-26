@@ -1,5 +1,5 @@
 import type { EngineId } from "./contracts";
-import type { EngineAdapter } from "./engine-adapter";
+import type { EngineAdapter, EngineCapability } from "./engine-adapter";
 import { RenPyEngineAdapter } from "./renpy-adapter";
 import { generateEngineProjectFiles, validateGeneratedProjectFiles } from "./engine-project-generator";
 import type { EngineProjectFile } from "./engine-project-generator";
@@ -67,7 +67,7 @@ export function createGeneratedProject(input:{engine:EngineId;projectId:string;n
 export class GeneratedProjectEngineAdapter implements EngineAdapter {
   readonly id: EngineId;
   readonly name: string;
-  readonly capabilities = ["project_bootstrap","scene_edit","code_edit","asset_import","animation","ui","navigation","save_system","test","build"] as const;
+  readonly capabilities: EngineCapability[] = ["project_bootstrap","scene_edit","code_edit","asset_import","animation","ui","navigation","save_system","test","build"];
   constructor(private readonly definition: EngineDefinition) {
     this.id = definition.id;
     this.name = definition.name;
