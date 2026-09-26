@@ -9,6 +9,8 @@
   },
   "include": [
     "packages/factory-core/src/contracts.ts",
+    "packages/factory-core/src/narrative.ts",
+    "packages/factory-core/src/narrative.test.ts",
     "packages/factory-core/src/engine-adapter.ts",
     "packages/factory-core/src/renpy-adapter.ts",
     "packages/factory-core/src/engine-project-generator.ts",
