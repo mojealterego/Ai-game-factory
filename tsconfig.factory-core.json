@@ -29,6 +29,8 @@
     "packages/factory-core/src/no-code-agent-builder.ts",
     "packages/factory-core/src/no-code-agent-builder.test.ts",
     "packages/factory-core/src/security-ip.ts",
-    "packages/factory-core/src/security-ip.test.ts"
+    "packages/factory-core/src/security-ip.test.ts",
+    "packages/factory-core/src/android-control-center.ts",
+    "packages/factory-core/src/android-control-center.test.ts"
   ]
 }
