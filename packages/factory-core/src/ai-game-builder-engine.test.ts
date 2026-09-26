@@ -33,7 +33,7 @@ export function runAIGameBuilderContractTests(): void {
 
   let build = createInitialGameBuild(compiled);
   assert(build.stage === "prompt", "initial build must start at prompt");
-  for (let i = 0; i < 11; i++) build = advanceGameBuild(build);
+  for (let i = 0; i < 8; i++) build = advanceGameBuild(build);
   assert(build.stage === "playtest", "pipeline must reach playable playtest stage");
   assert(build.projectFiles.length > 0, "playable stage must have project files");
 
