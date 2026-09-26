@@ -28,3 +28,5 @@ export * from "./build-center";
 export * from "./qa";
 export * from "./no-code-agent-builder";
 
+
+export * from "./security-ip";
