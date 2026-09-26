@@ -50,3 +50,8 @@ The Tripo adapter maps Factory jobs to asynchronous Tripo tasks and tracks task 
 ## Validation
 
 No 3D asset becomes release-ready until geometry, materials, UVs, scale, pivot, collision, LOD and license/provenance checks pass.
+
+
+## General Asset Factory
+
+The 3D pipeline is a specialization of the canonical 10-stage Asset Factory. See `docs/ASSET-FACTORY.md` for the full asset lifecycle and supported asset classes.
