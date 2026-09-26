@@ -131,7 +131,7 @@ export class FactoryExecutionRuntime {
   }
 
   async executeEngine(projectId: string, operation: EngineOperation): Promise<EngineResult> {
-    const engineId = String(operation.payload.engine ?? operation.projectId === projectId ? operation.payload.engine ?? "" : "");
+    const engineId = String(operation.payload.engine ?? "");
     const engine = this.engines.find(e => e.id === engineId);
     if (!engine) throw new Error("ENGINE_ADAPTER_NOT_REGISTERED:" + engineId);
     return engine.execute(operation);
