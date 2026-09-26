@@ -1,0 +1,30 @@
+name: Factory Core CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "packages/factory-core/**"
+      - "packages/adapters/**"
+      - "tsconfig.factory-core.json"
+      - "package.json"
+      - ".github/workflows/factory-core-ci.yml"
+  pull_request:
+    paths:
+      - "packages/factory-core/**"
+      - "packages/adapters/**"
+      - "tsconfig.factory-core.json"
+      - "package.json"
+      - ".github/workflows/factory-core-ci.yml"
+
+jobs:
+  typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - run: npm install --ignore-scripts
+      - run: npm run typecheck:factory-core
