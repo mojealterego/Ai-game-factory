@@ -25,4 +25,4 @@ API credentials never belong in frontend code or database rows. Floot-managed/ex
 No-code graph: Trigger → Intent → Planner → Provider Router → Tools → Memory → Approval → Executor → QA → Evidence → Output.
 
 ## Game engines
-Unreal, Unity, Godot, Cocos Creator, Defold, Stride, MonoGame, Bevy, O3DE, HTML5/Web and future adapters. The Game DNA is engine-neutral; adapters map it to a target runtime.
+Unreal, Unity, Godot, Cocos Creator, Defold, Stride, MonoGame, Bevy, O3DE, Ren'Py, HTML5/Web and future adapters. The Game DNA is engine-neutral; adapters map it to a target runtime.
