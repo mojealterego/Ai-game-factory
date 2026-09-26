@@ -28,12 +28,19 @@ export interface FactoryExecutionResult {
 const STAGE_CAPABILITY: Partial<Record<AIGameFactoryStage, { capability: Capability; kind: WorkerKind }>> = {
   research: { capability: "knowledge_retrieval", kind: "generic" },
   game_ideation: { capability: "game_ideation", kind: "agent" },
+  game_dna: { capability: "gameplay_logic", kind: "agent" },
+  gdd: { capability: "gdd", kind: "agent" },
+  world_characters_story: { capability: "story", kind: "agent" },
+  mechanics: { capability: "gameplay_logic", kind: "agent" },
+  systems: { capability: "gameplay_logic", kind: "agent" },
   code: { capability: "code", kind: "code" },
   assets: { capability: "image", kind: "asset" },
   audio: { capability: "audio", kind: "asset" },
   animation: { capability: "animation", kind: "asset" },
+  cinematics: { capability: "video", kind: "asset" },
   ai_playtest: { capability: "qa", kind: "qa" },
-  qa: { capability: "qa", kind: "qa" }
+  qa: { capability: "qa", kind: "qa" },
+  optimization: { capability: "qa", kind: "qa" }
 };
 
 export class FactoryExecutionRuntime {
@@ -97,8 +104,13 @@ export class FactoryExecutionRuntime {
       evidence.push("Engine adapter accepted project bootstrap.");
     }
 
-    project = await this.executeStage(project, "code", input.gameIdea, jobs, evidence);
-    project = await this.executeStage(project, "assets", input.gameIdea, jobs, evidence);
+    const designStages: AIGameFactoryStage[] = [
+      "game_dna", "gdd", "world_characters_story", "mechanics", "systems",
+      "code", "assets", "audio", "animation", "cinematics"
+    ];
+    for (const stage of designStages) {
+      project = await this.executeStage(project, stage, input.gameIdea, jobs, evidence);
+    }
 
     if (this.buildFarm && input.buildTarget) {
       project = markFactoryStage(project, "playable_prototype", "running", [], [], []);
@@ -154,6 +166,7 @@ export class FactoryExecutionRuntime {
   ): Promise<FactoryProjectContract> {
     const mapping = STAGE_CAPABILITY[stage];
     if (!mapping) throw new Error("NO_STAGE_EXECUTOR:" + stage);
+    project = markFactoryStage(project, stage, "running");
     const worker = this.workers.find(w => w.kinds.includes(mapping.kind));
     const request: CapabilityRequest = { projectId: project.projectId, capability: mapping.capability, prompt };
 
@@ -167,11 +180,12 @@ export class FactoryExecutionRuntime {
       };
       const job = await worker.submit(cloudRequest);
       jobs.push(job);
-      if (job.status === "failed" || job.status === "cancelled") {
-        return markFactoryStage(project, stage, "failed", [], [job.id], [worker.id], job.error);
+      const finalJob = await this.waitForWorker(worker, job, 30_000);
+      if (finalJob.status === "failed" || finalJob.status === "cancelled") {
+        return markFactoryStage(project, stage, "failed", [], [finalJob.id], [worker.id], finalJob.error);
       }
-      if (job.status !== "succeeded") {
-        return markFactoryStage(project, stage, "running", [], [job.id], [worker.id]);
+      if (finalJob.status !== "succeeded") {
+        return markFactoryStage(project, stage, "running", [], [finalJob.id], [worker.id]);
       }
       evidence.push("Cloud worker completed stage: " + stage);
       return markFactoryStage(project, stage, "succeeded", [], [job.id], [worker.id]);
@@ -181,7 +195,8 @@ export class FactoryExecutionRuntime {
     const provider = this.routeProvider(request);
     const job = await provider.submit(request);
     jobs.push(job);
-    if (job.status === "succeeded") {
+    const finalJob = await this.waitForProvider(provider, job, 30_000);
+    if (finalJob.status === "succeeded") {
       evidence.push("Provider completed stage: " + stage);
       return markFactoryStage(project, stage, "succeeded", [], [job.id], [provider.id]);
     }
