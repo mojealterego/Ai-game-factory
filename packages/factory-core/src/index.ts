@@ -38,3 +38,7 @@ export * from "./story-world-engine";
 export * from "./ludo-api-mcp-adapter";
 export * from "./ai-game-factory-pipeline";
 export * from "./three-d-asset-factory";
+
+export * from "./unity-engine-adapter";
+export * from "./unity-asset-generator";
+export * from "./asset-router";
