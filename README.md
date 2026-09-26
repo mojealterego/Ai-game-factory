@@ -97,3 +97,14 @@ See docs/AI-GAME-FACTORY-ARCHITECTURE.md for the canonical architecture.
 ### 3D Asset Factory
 
 Complete game-ready 3D pipeline: Text/Image/Multi-view/Concept → generation → Smart Mesh → high detail → segmentation → retopology → polygon optimization → UV → AI Texture → PBR → Auto Rig → Animation → LOD0-LOD3 → collision → optimization → QA/performance → provenance → GLB/FBX/OBJ/USD/Unity/Unreal/Godot/Cocos. Includes an Asset Optimization Agent with mobile/web/PC/console/VR profiles and a Tripo API v3 adapter contract.
+
+
+## Unity Engine Adapter
+
+AI GAME FACTORY now exposes a dedicated Unity Engine Adapter. It models Unity project context, scene/GameObject/component/package/script/prefab/material/animation/terrain context, project-aware Assistant/agent workflows, Unity asset generators, MCP, AI Gateway, Sentis runtime boundaries and delegated Unity builds.
+
+The adapter is engine-owned: it does not bundle Unity Editor, Unity AI models or proprietary Unity implementation. A live Unity operation requires a real Unity 6+ project/worker with the applicable packages, cloud linkage and access.
+
+The shared Asset Router can route AssetRequest workloads between Unity-native generation, Tripo, OpenAI, Gemini, Stability, Replicate, Fal, Hugging Face, Local GGUF and custom providers.
+
+See docs/UNITY-ENGINE-ADAPTER.md.
