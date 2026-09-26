@@ -1,6 +1,6 @@
 import {
   AI_GAME_FACTORY_PIPELINE, FACTORY_STAGE_DEPENDENCIES,
-  createAIGameFactoryProject, getFactoryArchitecture,
+  createAIGameFactoryProject, getFactoryArchitecture, prepareResearch,
   markFactoryStage, prepareGameIdeation, compileDesign
 } from "./ai-game-factory-pipeline";
 
