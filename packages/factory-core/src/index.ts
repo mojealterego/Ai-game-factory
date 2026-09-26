@@ -17,3 +17,4 @@ export * from "./handoff";
 export * from "./orchestrator";
 export * from "./factory-core";
 export * from "./renpy-adapter";
+export * from "./engine-registry";
