@@ -1,6 +1,33 @@
 import type { BuildArtifact, BuildRequest, BuildTarget } from "./build-orchestrator";
 import { buildAndVerify, type BuildAdapter } from "./build-orchestrator";
 
+export interface BuildArtifactInspection {
+  uri: string;
+  sha256: string;
+  sizeBytes: number;
+  mimeType: string;
+  signed: boolean;
+  evidence: string[];
+}
+
+export interface BuildArtifactInspector {
+  inspect(archiveDownloadUrl: string, target: BuildTarget): Promise<BuildArtifactInspection>;
+}
+
+export class HttpBuildArtifactInspector implements BuildArtifactInspector {
+  constructor(private readonly baseUrl: string, private readonly token?: string) {}
+  async inspect(archiveDownloadUrl: string, target: BuildTarget): Promise<BuildArtifactInspection> {
+    const response = await fetch(new URL("/v1/build-artifacts/inspect", this.baseUrl), {
+      method: "POST",
+      headers: { "content-type": "application/json", ...(this.token ? { authorization: "Bearer " + this.token } : {}) },
+      body: JSON.stringify({ archiveDownloadUrl, target })
+    });
+    const text = await response.text();
+    if (!response.ok) throw new Error("BUILD_ARTIFACT_INSPECT_HTTP_" + response.status + ":" + text.slice(0, 500));
+    return JSON.parse(text) as BuildArtifactInspection;
+  }
+}
+
 export interface BuildFarmSubmission {
   buildId: string;
   projectId: string;
@@ -68,7 +95,7 @@ export class GitHubActionsBuildFarm implements BuildFarmAdapter {
   readonly id = "github-actions";
   readonly targets: BuildTarget[] = ["android-apk", "android-aab", "web", "windows", "linux", "macos", "ios"];
 
-  constructor(private readonly transport: GitHubActionsTransport, private readonly workflow = "factory-build.yml", private readonly ref = "main") {}
+  constructor(private readonly transport: GitHubActionsTransport, private readonly workflow = "factory-build.yml", private readonly ref = "main", private readonly inspector?: BuildArtifactInspector) {}
 
   async submit(request: BuildRequest): Promise<BuildFarmSubmission> {
     const dispatched = await this.transport.dispatchWorkflow({
