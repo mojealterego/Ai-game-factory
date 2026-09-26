@@ -9,7 +9,7 @@
     {"name":"Tripo3D","capabilities":["text_to_3d","image_to_3d","multiview_to_3d","mesh_processing","texturing","segmentation","retopology","rigging","animation","retargeting"]},
     {"name":"Unity AI","capabilities":["project_aware_assistant","agent_mode","mcp","ai_gateway","sprite_generator","texture_generator","sound_generator","animation_generator","material_generator","sentis"]}
   ],
-  "engineAdapters":["unreal","unity","godot","cocos","defold","stride","monogame","bevy","o3de","html5","custom"],
+  "engineAdapters":["unreal","unity","godot","cocos","defold","stride","monogame","bevy","o3de","html5","renpy","custom"],
   "artifactTypes":["code","2d","3d","texture","material","animation","audio","voice","video","gdd","story","build"],
   "platforms":["android","web","windows","linux","future"],
   "safety":{"casinoMode":"virtual_non_monetary","matureContent":"18_plus_non_explicit","minorsInSexualContent":false}
