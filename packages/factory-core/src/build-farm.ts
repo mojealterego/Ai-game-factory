@@ -17,6 +17,51 @@ export interface BuildFarmAdapter extends BuildAdapter {
 export interface GitHubActionsTransport {
   dispatchWorkflow(input: { workflow: string; ref: string; inputs: Record<string, string> }): Promise<{ runUrl?: string; runId?: number }>;
   getWorkflowRun(runId: number): Promise<{ status: string; conclusion: string | null; htmlUrl?: string }>;
+  getArtifacts?(runId: number): Promise<Array<{ name: string; archiveDownloadUrl: string; expired: boolean }>>;
+}
+
+export class GitHubActionsFetchTransport implements GitHubActionsTransport {
+  constructor(private readonly repository: string, private readonly token: string, private readonly apiBase = "https://api.github.com") {
+    if (!token.trim()) throw new Error("GITHUB_ACTIONS_TOKEN_REQUIRED");
+  }
+
+  private async request<T>(path: string, init: RequestInit = {}): Promise<T> {
+    const response = await fetch(this.apiBase + path, {
+      ...init,
+      headers: {
+        accept: "application/vnd.github+json",
+        "content-type": "application/json",
+        "x-github-api-version": "2026-03-10",
+        authorization: "Bearer " + this.token,
+        ...(init.headers ?? {})
+      }
+    });
+    const text = await response.text();
+    if (!response.ok) throw new Error("GITHUB_ACTIONS_HTTP_" + response.status + ":" + text.slice(0, 500));
+    return (text ? JSON.parse(text) : undefined) as T;
+  }
+
+  async dispatchWorkflow(input: { workflow: string; ref: string; inputs: Record<string, string> }) {
+    const response = await this.request<{ workflow_run_id?: number; run_url?: string; html_url?: string }>(
+      "/repos/" + this.repository + "/actions/workflows/" + encodeURIComponent(input.workflow) + "/dispatches",
+      { method: "POST", body: JSON.stringify({ ref: input.ref, inputs: input.inputs }) }
+    );
+    return { runId: response.workflow_run_id, runUrl: response.html_url ?? response.run_url };
+  }
+
+  async getWorkflowRun(runId: number) {
+    const response = await this.request<{ status: string; conclusion: string | null; html_url?: string }>(
+      "/repos/" + this.repository + "/actions/runs/" + runId
+    );
+    return { status: response.status, conclusion: response.conclusion, htmlUrl: response.html_url };
+  }
+
+  async getArtifacts(runId: number) {
+    const response = await this.request<{ artifacts: Array<{ name: string; archive_download_url: string; expired: boolean }> }>(
+      "/repos/" + this.repository + "/actions/runs/" + runId + "/artifacts"
+    );
+    return response.artifacts.map(a => ({ name: a.name, archiveDownloadUrl: a.archive_download_url, expired: a.expired }));
+  }
 }
 
 export class GitHubActionsBuildFarm implements BuildFarmAdapter {
