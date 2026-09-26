@@ -1,4 +1,4 @@
-export type BuildTarget = "android-apk" | "android-aab" | "web" | "windows" | "linux";
+export type BuildTarget = "android-apk" | "android-aab" | "web" | "windows" | "linux" | "macos" | "ios" | (string & {});
 
 export interface BuildRequest {
   projectId: string;
