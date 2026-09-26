@@ -50,6 +50,7 @@ export function generateEngineProjectFiles(input: EngineProjectInput): EnginePro
         { path: "ProjectSettings/ProjectSettings.asset", content: "%YAML 1.1\n%TAG !u! tag:unity3d.com,2011:\n--- !u!129 &1\nPlayerSettings:\n  productGUID: " + input.projectId.slice(0, 32).padEnd(32, "0") + "\n  productName: " + name + "\n" },
         { path: "Assets/Scenes/Main.unity", content: "%YAML 1.1\n%TAG !u! tag:unity3d.com,2011:\n--- !u!1045 &1\nEditorBuildSettings:\n  m_Scenes: []\n" },
         { path: "Assets/Scripts/FactoryBootstrap.cs", content: "using UnityEngine;\n\npublic sealed class FactoryBootstrap : MonoBehaviour { }\n" },
+        { path: "Assets/Scripts/FactoryBuild.cs", content: "using UnityEditor;\nusing UnityEditor.Build.Reporting;\n\npublic static class FactoryBuild {\n    public static void Build() {\n        var output = \"build/game\";\n        BuildPipeline.BuildPlayer(EditorBuildSettings.scenes, output, EditorUserBuildSettings.activeBuildTarget, BuildOptions.None);\n    }\n}\n" },
         { path: "Packages/manifest.json", content: json({ dependencies: { "com.unity.modules.ai": "1.0.0", "com.unity.modules.physics": "1.0.0", "com.unity.modules.ui": "1.0.0" } }) },
       ];
     case "godot":
