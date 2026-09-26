@@ -78,7 +78,7 @@ export class GeneratedProjectEngineAdapter implements EngineAdapter {
     return { status:"succeeded" as const, artifacts:project.files.map(file => file.path), diagnostics:["Generated project manifest created for "+this.definition.name+"."] };
   }
   async execute(operation: import("./engine-adapter").EngineOperation) {
-    if (!this.capabilities.includes(operation.capability as never)) {
+    if (!(this.capabilities as readonly string[]).includes(operation.capability)) {
       return { status:"failed" as const, diagnostics:["Unsupported engine operation: "+operation.capability] };
     }
     return { status:"succeeded" as const, diagnostics:["Operation delegated to "+this.definition.name+" worker: "+operation.capability] };
