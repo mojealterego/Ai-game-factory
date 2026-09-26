@@ -5,7 +5,9 @@ export type EngineId =
 export type Capability =
   | "game_ideation" | "gdd" | "story" | "narrative_runtime"
   | "gameplay_logic" | "code" | "image" | "sprite" | "video"
-  | "audio" | "voice" | "text_to_3d" | "image_to_3d" | "multiview_to_3d"
+  | "audio" | "music" | "soundtrack" | "ambient" | "sfx" | "footsteps" | "ui_sounds"
+  | "cinematic_sound" | "voice_generation" | "dubbing" | "lip_sync" | "dialogue_timing"
+  | "multilingual_voice" | "voice" | "text_to_3d" | "image_to_3d" | "multiview_to_3d"
   | "mesh_processing" | "texturing" | "rigging" | "animation"
   | "retargeting" | "local_inference" | "build" | "qa";
 
