@@ -37,3 +37,4 @@ export * from "./reference-ideation-engine";
 export * from "./story-world-engine";
 export * from "./ludo-api-mcp-adapter";
 export * from "./ai-game-factory-pipeline";
+export * from "./three-d-asset-factory";
