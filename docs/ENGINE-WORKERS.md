@@ -6,7 +6,7 @@ AI GAME FACTORY keeps engine SDKs outside Factory Core.
 
 Factory Core → Engine Adapter → Generated Project → Engine Worker → Artifact
 
-The project generator creates an engine-native starter project. The build worker resolves a deterministic command for the selected engine and target. A worker implementation supplies the actual process runner and the installed SDK/toolchain.
+The project generator creates an engine-native starter project. The build worker resolves a deterministic command for the selected engine and target. A worker implementation supplies the actual process runner and the installed SDK/toolchain. Build Center then requires stage evidence and a real binary artifact before the run can be marked successful.
 
 ## Supported command families
 
@@ -29,7 +29,7 @@ The command plan is implemented in packages/factory-core/src/engine-build-worker
 
 ## Important boundary
 
-A command plan is not evidence that an engine SDK executed successfully. A worker must run the command, capture stdout/stderr and exit code, then attach artifact hashes and build evidence before a release can be marked successful.
+A command plan is not evidence that an engine SDK executed successfully. A worker must run the command, capture stdout/stderr and exit code, then attach artifact URI/path, byte size, SHA-256, format/MIME metadata and build evidence before a release can be marked successful.
 
 ## Android CI
 
