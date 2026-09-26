@@ -1,105 +1,148 @@
-# 3D Asset Pipeline
+# 3D ASSET FACTORY
 
-## Full scope
+## Cel
 
-The 3D Asset Pipeline is the production-grade specialization of the general Asset Factory.
+3D Asset Factory jest game-ready warstwą produkcji 3D nad istniejącym ThreeD Pipeline. Przyjmuje wymagania projektu, wybiera pipeline zależny od typu assetu, prowadzi generację i post-processing, następnie optymalizuje asset pod docelowy runtime i dopiero wtedy eksportuje go do silnika.
 
-```text
-text → 3D
-image → 3D
-reference → 3D
-       ↓
-mesh processing
-       ↓
-topology
-       ↓
+## Input
+
+- Text → 3D
+- Image → 3D
+- Multi-view → 3D
+- Concept → 3D
+
+## Processing
+
+~~~text
+INPUT
+ ↓
+GENERATION
+ ↓
+SMART MESH
+ ↓
+HIGH DETAIL
+ ↓
+SEGMENTATION
+ ↓
+RETOPOLOGY
+ ↓
+POLYGON OPTIMIZATION
+ ↓
 UV
-       ↓
-textures
-       ↓
-PBR
-       ↓
-materials
-       ↓
-rigging
-       ↓
-animation
-       ↓
+ ↓
+AI TEXTURE
+ ↓
+PBR MATERIALS
+ ↓
+MATERIAL OPTIMIZATION
+ ↓
+AUTO RIG
+ ↓
+ANIMATION
+ ↓
 LOD
-       ↓
-collision
-       ↓
-optimization
-       ↓
-engine export
-       ↓
-asset validation
-```
+ ↓
+COLLISION
+ ↓
+ASSET OPTIMIZATION
+ ↓
+QUALITY CHECK
+ ↓
+PERFORMANCE CHECK
+ ↓
+LICENSE / PROVENANCE
+ ↓
+EXPORT
+~~~
 
-## Typed pipeline
+## Asset-specific factories
 
-The canonical stages are represented by `ThreeDStage` and `THREE_D_ASSET_PIPELINE` in `packages/factory-core/src/assets.ts`.
+- Character Pipeline: topology → UV → PBR → rig → animation → LOD → collision → optimization → validation → export.
+- NPC Variant Factory: controlled variants preserving source identity, skeleton and provenance.
+- Prop Pipeline: segmentation → topology → materials → LOD → collision → optimization.
+- Environment Pipeline: segmentation → topology → material optimization → LOD → collision → runtime budget.
+- Vehicle Pipeline: topology → materials → LOD → collision → optimization.
+- Weapon Pipeline: topology → materials → LOD → collision → optimization.
 
-The executable orchestration layer is `packages/factory-core/src/three-d-pipeline.ts`. External DCCs, generators and engine SDKs are injected as stage executors; Factory Core does not claim an external operation completed without an adapter result.
+## Asset Optimization Agent
 
-## Inputs
+The Factory selects an optimization profile before engine import:
 
-- **Text → 3D**: structured prompt/brief to a compatible 3D generator.
-- **Image → 3D**: source image plus provenance and reconstruction constraints.
-- **Reference → 3D**: approved project references, identity constraints and source lineage.
+- polygon budget,
+- texture resolution,
+- LOD0,
+- LOD1,
+- LOD2,
+- LOD3,
+- collision policy,
+- material complexity,
+- draw-call budget,
+- target memory.
 
-## Production stages
+Profiles:
+- mobile,
+- web,
+- PC,
+- console,
+- VR,
+- custom.
 
-| Stage | Required responsibility |
-|---|---|
-| Mesh processing | clean, repair, merge/separate, normals and geometry preparation |
-| Topology | inspect/retopologize and enforce topology constraints |
-| UV | unwrap, pack and validate UV sets |
-| Textures | generate/bake texture maps |
-| PBR | validate physically based map sets and conventions |
-| Materials | assemble engine-neutral material definitions |
-| Rigging | skeleton, weights and constraints |
-| Animation | create/retarget/validate animation clips |
-| LOD | generate and validate LOD chain |
-| Collision | generate and validate collision geometry |
-| Optimization | enforce platform/engine budgets |
-| Engine export | serialize to the selected engine adapter format |
-| Asset validation | technical, visual, provenance and budget gates |
+For Android/iOS the default mobile policy caps geometry and texture complexity and creates four LOD levels. These are Factory defaults, not universal engine limits.
 
-## Job requirements
+## Export
 
-The contract supports target engine/platform, polygon budget, texture resolution, LOD count, rigging/animation/collision/PBR requirements and export format.
+The Factory contract supports GLB, FBX, OBJ, USD, Unity, Unreal, Godot and Cocos.
 
-## Validation gates
+An export is not release-ready until its URI, checksum, license and provenance are present.
 
-Release readiness can require:
+## Tripo Adapter
 
-- mesh integrity and topology checks
-- UV validity
-- texture dimensions/color-space checks
-- PBR completeness
-- material references
-- scale/pivot checks
-- rig and weight integrity
-- animation integrity
-- LOD coverage
-- collision coverage
-- memory/file-size/draw-call budgets
-- engine import/export integrity
-- provenance and license metadata.
+The Tripo adapter maps Factory operations to the documented Tripo API v3 task model.
 
-## Engine adapters
+Generation:
+- text → text_to_model
+- image → image_to_model
+- multiview → multiview_to_model
+- concept → text-driven generation
 
-The pipeline remains engine-neutral and can target Unreal, Unity, Godot, Cocos Creator, Defold, Stride, MonoGame, Bevy, O3DE, HTML/Web and future adapters.
+Processing:
+- smart mesh → mesh completion
+- segmentation → mesh segmentation
+- retopology → decimation/retopology
+- AI texture → texture
+- auto rig → rig
+- animation → retarget
 
-## Relationship to Asset Factory
+The adapter uses an injected transport. It does not contain an API key and does not claim success before the provider reports task completion.
 
-The general Asset Factory remains:
+Tripo's current public API documents asynchronous tasks, text/image/multiview generation, texture, segmentation, retopology, rigging and retargeting, plus game-oriented low-poly and face-count controls. The Factory consumes these through an adapter rather than coupling its core to Tripo internals.
 
-`Concept → Reference → Generation → Variation → Selection → Editing → Optimization → Metadata → Import → Engine Asset`
+## Quality / performance / provenance
 
-The 3D branch expands the production portion into:
+Three separate gates are intentional:
 
-`Text/Image/Reference → Generation → Mesh Processing → Topology → UV → Textures → PBR → Materials → Rigging → Animation → LOD → Collision → Optimization → Engine Export → Asset Validation`
+1. Quality — geometry, UV, materials, rig, animation and export integrity.
+2. Performance — polygons, texture memory, material complexity, draw calls, LOD and collision.
+3. License / Provenance — provider, model, source references, license, task IDs and checksum.
 
-Thus 3D assets retain the general Factory's provenance and creative lineage while gaining production-specific geometry, material, animation and engine validation.
+## Runtime boundary
+
+Implemented:
+- complete 3D Asset Factory contract,
+- asset-category pipelines,
+- optimization planner,
+- four-level LOD planning,
+- collision/material/draw-call/memory policy,
+- export validation,
+- Tripo API v3 adapter contract.
+
+Still requires execution infrastructure:
+- live Tripo API credentials,
+- HTTP/MCP worker,
+- actual file download/storage,
+- engine import workers,
+- device profiling,
+- production collision baking,
+- real performance measurement.
+
+These are runtime responsibilities and must be evidenced by actual worker results.
