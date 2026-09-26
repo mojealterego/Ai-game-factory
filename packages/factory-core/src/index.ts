@@ -32,3 +32,4 @@ export * from "./no-code-agent-builder";
 export * from "./security-ip";
 
 export * from "./android-control-center";
+export * from "./ai-game-builder-engine";
