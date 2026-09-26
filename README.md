@@ -63,6 +63,7 @@ The engine-neutral layer is now executable at the contract level:
 - [Cinematic Narrative Engine](docs/CINEMATIC-NARRATIVE-ENGINE.md)
 - [AI Game Builder Engine](docs/AI-GAME-BUILDER-ENGINE.md)
 - [Reference & Ideation Engine](docs/REFERENCE-IDEATION-ENGINE.md)
+- [AI Story World Engine](docs/AI-STORY-WORLD-ENGINE.md)
 - [AI Game Compiler](docs/AI-GAME-COMPILER.md)
 - [Asset Factory](docs/ASSET-FACTORY.md)
 - [3D Asset Factory](docs/3D-ASSET-FACTORY.md)
