@@ -114,9 +114,27 @@ function hasAny(text: string, terms: string[]): boolean {
 }
 
 function numberFrom(text: string, terms: string[], fallback: number): number {
+  const value = normalize(text);
   for (const term of terms) {
-    const match = normalize(text).match(new RegExp("(\\d+)\\s*" + term));
+    const match = value.match(new RegExp("(\\d+)\\s*" + term));
     if (match) return Number(match[1]);
+  }
+  const numberWords: Array<[number, string[]]> = [
+    [1, ["jeden", "jedna", "jednym", "jednego", "jedna"]],
+    [2, ["dwa", "dwoch", "dwoma", "dwie"]],
+    [3, ["trzy", "trzech", "trzema"]],
+    [4, ["cztery", "czterech", "czterema"]],
+    [5, ["piec", "pieciu", "piecioma", "pietoma"]],
+    [6, ["szesc", "szesciu", "szescioma"]],
+    [7, ["siedem", "siedmiu", "siedmioma"]],
+    [8, ["osiem", "osmiu", "osmioma"]],
+    [9, ["dziewiec", "dziewieciu", "dziewiecioma"]],
+    [10, ["dziesiec", "dziesieciu", "dziesiecioma"]]
+  ];
+  for (const [number, words] of numberWords) {
+    for (const term of terms) {
+      if (words.some(word => value.includes(word + " " + term) || value.includes(word + term))) return number;
+    }
   }
   return fallback;
 }
