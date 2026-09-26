@@ -1,6 +1,6 @@
 import type { Capability, CapabilityRequest, Job, ProviderAdapter } from "./contracts";
 import type { EngineAdapter, EngineOperation, EngineResult } from "./engine-adapter";
-import type { BuildAdapter, BuildRequest, BuildArtifact } from "./build-orchestrator";
+import type { BuildRequest, BuildArtifact } from "./build-orchestrator";
 import type { CloudWorker, CloudWorkerRequest, WorkerKind } from "./cloud-workers";
 import type { LudoAdapter } from "./ludo-api-mcp-adapter";
 import { createAIGameFactoryProject, markFactoryStage, type AIGameFactoryStage, type FactoryProjectContract } from "./ai-game-factory-pipeline";
