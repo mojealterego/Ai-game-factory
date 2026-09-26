@@ -63,6 +63,7 @@ The engine-neutral layer is now executable at the contract level:
 - [AI Game Compiler](docs/AI-GAME-COMPILER.md)
 - [Asset Factory](docs/ASSET-FACTORY.md)
 - [3D Asset Factory](docs/3D-ASSET-FACTORY.md)
+- [AI Model Factory](docs/AI-MODEL-FACTORY.md)
 - [Unity AI Adapter](docs/UNITY-AI-ADAPTER.md)
 - [Game Research Lab](docs/GAME-RESEARCH-LAB.md)
 - [Native Android architecture](docs/ANDROID-NATIVE.md)
