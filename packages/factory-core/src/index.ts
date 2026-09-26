@@ -6,6 +6,7 @@ export * from "./provenance";
 export * from "./build-orchestrator";
 export * from "./state";
 export * from "./game-dna";
+export * from "./game-builder";
 export * from "./project-manager";
 export * from "./task-queue";
 export * from "./checkpoints";
