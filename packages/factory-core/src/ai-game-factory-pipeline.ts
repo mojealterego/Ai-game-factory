@@ -189,8 +189,7 @@ export function compileDesign(project: FactoryProjectContract, idea: GameIdea): 
     prompt: idea.concept,
     platform: project.platforms.includes("android") ? "android" : "multi",
     engine: project.engine,
-    genre: idea.genres,
-    dimensions: gameDna.dimensionality
+    genre: idea.genres
   };
   const compiledGame = compileGamePrompt(prompt);
   let next = selectGameIdea(project, idea);
