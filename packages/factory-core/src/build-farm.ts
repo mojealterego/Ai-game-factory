@@ -92,6 +92,7 @@ export class GitHubActionsFetchTransport implements GitHubActionsTransport {
 }
 
 export class GitHubActionsBuildFarm implements BuildFarmAdapter {
+  private readonly targets = new Map<string, BuildTarget>();
   readonly id = "github-actions";
   readonly targets: BuildTarget[] = ["android-apk", "android-aab", "web", "windows", "linux", "macos", "ios"];
 
@@ -103,7 +104,9 @@ export class GitHubActionsBuildFarm implements BuildFarmAdapter {
       ref: this.ref,
       inputs: { projectId: request.projectId, engine: request.engine, target: request.target, configuration: request.configuration, sign: String(request.sign) }
     });
-    const buildId = String(dispatched.runId ?? crypto.randomUUID());\n    this.targets.set(buildId, request.target);\n    return { buildId, projectId: request.projectId, target: request.target, status: "queued", workflowUrl: dispatched.runUrl };
+    const buildId = String(dispatched.runId ?? crypto.randomUUID());
+    this.targets.set(buildId, request.target);
+    return { buildId, projectId: request.projectId, target: request.target, status: "queued", workflowUrl: dispatched.runUrl };
   }
 
   async build(request: BuildRequest): Promise<BuildArtifact> {
@@ -119,7 +122,11 @@ export class GitHubActionsBuildFarm implements BuildFarmAdapter {
       const run = await this.transport.getWorkflowRun(runId);
       if (run.status === "completed") {
         if (run.conclusion !== "success") return { id: buildId, target: "custom", status: "failed", verified: false };
-        const target = this.targets.get(buildId) ?? "custom";\n        const artifacts = this.transport.getArtifacts ? await this.transport.getArtifacts(runId) : [];\n        const artifact = artifacts.find(a => !a.expired);\n        if (!artifact) return { id: buildId, target, status: "failed", verified: false, buildRunId: buildId, evidence: ["BUILD_ARTIFACT_NOT_FOUND"] };\n        return { id: buildId, target, status: "succeeded", verified: false, buildRunId: buildId, downloadUri: artifact.archiveDownloadUrl, evidence: ["GITHUB_ARTIFACT:" + artifact.name] };
+        const target = this.targets.get(buildId) ?? "custom";
+        const artifacts = this.transport.getArtifacts ? await this.transport.getArtifacts(runId) : [];
+        const artifact = artifacts.find(a => !a.expired);
+        if (!artifact) return { id: buildId, target, status: "failed", verified: false, buildRunId: buildId, evidence: ["BUILD_ARTIFACT_NOT_FOUND"] };
+        return { id: buildId, target, status: "succeeded", verified: false, buildRunId: buildId, downloadUri: artifact.archiveDownloadUrl, evidence: ["GITHUB_ARTIFACT:" + artifact.name] };
       }
       await new Promise(resolve => setTimeout(resolve, 5000));
     }
