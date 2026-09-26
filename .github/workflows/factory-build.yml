@@ -57,24 +57,24 @@ jobs:
       - name: Validate Factory build request
         run: |
           set -euo pipefail
-          test -n "${ inputs.projectId }}"
+          test -n "${{ inputs.projectId }}}"
           test -f settings.gradle.kts
           test -f build.gradle.kts
           test -f app/build.gradle.kts
       - name: Build requested APK/AAB
         run: |
           set -euo pipefail
-          if [ "${ inputs.target }" = "android-aab" ]; then
-            if [ "${ inputs.configuration }" = "debug" ]; then gradle --no-daemon bundleDebug; else gradle --no-daemon bundleRelease; fi
+          if [ "${{ inputs.target }}" = "android-aab" ]; then
+            if [ "${{ inputs.configuration }}" = "debug" ]; then gradle --no-daemon bundleDebug; else gradle --no-daemon bundleRelease; fi
           else
-            if [ "${ inputs.configuration }" = "debug" ]; then gradle --no-daemon assembleDebug; else gradle --no-daemon assembleRelease; fi
+            if [ "${{ inputs.configuration }}" = "debug" ]; then gradle --no-daemon assembleDebug; else gradle --no-daemon assembleRelease; fi
           fi
       - name: Verify binary and checksum
         shell: bash
         run: |
           set -euo pipefail
           mkdir -p build/build-center-evidence
-          if [ "${ inputs.target }" = "android-aab" ]; then files=$(find app/build/outputs/bundle -type f -name "*.aab"); else files=$(find app/build/outputs/apk -type f -name "*.apk"); fi
+          if [ "${{ inputs.target }}" = "android-aab" ]; then files=$(find app/build/outputs/bundle -type f -name "*.aab"); else files=$(find app/build/outputs/apk -type f -name "*.apk"); fi
           test -n "$files"
           : > build/build-center-evidence/SHA256SUMS
           for f in $files; do test -s "$f"; sha256sum "$f" >> build/build-center-evidence/SHA256SUMS; done
@@ -84,25 +84,25 @@ jobs:
         run: |
           set -euo pipefail
           : > build/build-center-evidence/SIGNING.txt
-          if [ "${ inputs.target }" = "android-apk" ]; then
+          if [ "${{ inputs.target }}" = "android-apk" ]; then
             for f in app/build/outputs/apk/*/*.apk; do "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose "$f"; echo "APK signature verified: $f" >> build/build-center-evidence/SIGNING.txt; done
           else
             for f in app/build/outputs/bundle/*/*.aab; do jarsigner -verify "$f" >/dev/null; echo "AAB signature verified: $f" >> build/build-center-evidence/SIGNING.txt; done
           fi
-          echo "Production signing policy requested=${ inputs.sign }" >> build/build-center-evidence/SIGNING.txt
+          echo "Production signing policy requested=${{ inputs.sign }}" >> build/build-center-evidence/SIGNING.txt
           test -s build/build-center-evidence/SIGNING.txt
       - name: Create artifact manifest
         shell: bash
         run: |
           set -euo pipefail
           cat > build/build-center-evidence/build-manifest.json <<EOF
-          {"schemaVersion":"factory-build/1.0","projectId":"${ inputs.projectId }","engine":"${ inputs.engine }","target":"${ inputs.target }","configuration":"${ inputs.configuration }","evidence":["SHA256SUMS","SIGNING.txt"]}
+          {"schemaVersion":"factory-build/1.0","projectId":"${{ inputs.projectId }}","engine":"${{ inputs.engine }}","target":"${{ inputs.target }}","configuration":"${{ inputs.configuration }}","evidence":["SHA256SUMS","SIGNING.txt"]}
           EOF
           test -s build/build-center-evidence/build-manifest.json
       - name: Upload real APK/AAB
         uses: actions/upload-artifact@v4
         with:
-          name: factory-${ inputs.projectId }-${ inputs.target }-${ github.run_id }
+          name: factory-${{ inputs.projectId }}-${{ inputs.target }}-${{ github.run_id }}
           if-no-files-found: error
           path: |
             apps/android-native/app/build/outputs/**/*.apk
