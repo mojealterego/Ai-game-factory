@@ -42,6 +42,8 @@
     "packages/factory-core/src/android-control-center.test.ts",
     "packages/factory-core/src/ludo-api-mcp-adapter.ts",
     "packages/factory-core/src/ai-game-factory-pipeline.ts",
-    "packages/factory-core/src/ai-game-factory-pipeline.test.ts"
+    "packages/factory-core/src/ai-game-factory-pipeline.test.ts",
+    "packages/factory-core/src/three-d-asset-factory.ts",
+    "packages/factory-core/src/three-d-asset-factory.test.ts"
   ]
 }
