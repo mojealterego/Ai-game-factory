@@ -82,3 +82,13 @@ The engine-neutral layer is now executable at the contract level:
 The repository is the source-control home for the project. The live mobile control center is hosted through Floot. Native Android source is being developed as a first-class project in this repository.
 
 Provider connections, cloud builds and native APK/AAB generation require their respective connected services. The project must never mark an external operation complete without evidence.
+
+## AI GAME FACTORY — Unified Production Core
+
+The repository now exposes one canonical production lifecycle through AI_GAME_FACTORY_PIPELINE:
+
+IDEA → RESEARCH → GAME IDEATION → GAME DNA → GDD → WORLD/CHARACTERS/STORY → MECHANICS → SYSTEMS → CODE → ASSETS → AUDIO → ANIMATION → CINEMATICS → PLAYABLE PROTOTYPE → AI PLAYTEST → QA → OPTIMIZATION → BUILD → APK/AAB → RELEASE.
+
+The four intelligence domains are unified under Factory Core: Research, Creation, Story World, and Cinematic Drama. Ludo is connected through an explicit API/MCP adapter contract, while engine-specific execution remains behind EngineAdapter.
+
+See docs/AI-GAME-FACTORY-ARCHITECTURE.md for the canonical architecture.
