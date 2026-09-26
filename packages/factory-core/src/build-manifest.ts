@@ -7,7 +7,7 @@ export interface BuildManifest {
   signing?: { keyAlias: string; secretRef: string };
   minSdk?: number;
   targetSdk?: number;
-  artifact?: { uri: string; sha256: string; sizeBytes: number };
+  artifact?: { uri: string; sha256: string; sizeBytes: number; mimeType?: string; format?: "apk" | "aab" | "web" | "windows" | "linux" | "archive" | "custom"; signed?: boolean; verified: boolean };
   evidence: string[];
 }
 
