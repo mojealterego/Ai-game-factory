@@ -51,3 +51,11 @@ export function runAIGameBuilderContractTests(): void {
 }
 
 runAIGameBuilderContractTests();
+
+
+const polishExample = compileGamePrompt({
+  projectId: "szpital",
+  prompt: "Stwórz mi mobilną grę survival horror w opuszczonym szpitalu, z trzema bohaterami, systemem decyzji, proceduralnymi wydarzeniami i pięcioma zakończeniami."
+});
+assert(polishExample.spec.heroCount === 3, "Polish natural-language count must infer three heroes");
+assert(polishExample.spec.endingCount === 5, "Polish natural-language count must infer five endings");
