@@ -1,6 +1,8 @@
 import type { EngineId } from "./contracts";
 import type { EngineAdapter } from "./engine-adapter";
 import { RenPyEngineAdapter } from "./renpy-adapter";
+import { generateEngineProjectFiles, validateGeneratedProjectFiles } from "./engine-project-generator";
+import type { EngineProjectFile } from "./engine-project-generator";
 
 export const FACTORY_ENGINE_IDS: readonly EngineId[] = [
   "unreal","unity","godot","cocos","defold","stride","monogame","bevy","o3de","html5","renpy","custom",
@@ -45,7 +47,7 @@ export interface GeneratedProject {
   engine: EngineId;
   projectId: string;
   kind: EngineProjectKind;
-  files: Array<{path:string;content:string}>;
+  files: EngineProjectFile[];
   buildTargets: string[];
   provenance: {factory:"AI GAME FACTORY";generatedAt:string;engine:EngineId};
 }
@@ -56,8 +58,10 @@ export function createGeneratedProject(input:{engine:EngineId;projectId:string;n
   if (!input.projectId.trim()) throw new Error("Generated project requires projectId.");
   if (!name) throw new Error("Generated project requires name.");
   const generatedAt=input.generatedAt || new Date().toISOString();
-  const manifest=JSON.stringify({factory:"AI GAME FACTORY",engine:input.engine,projectId:input.projectId,name},null,2)+"\n";
-  return {engine:input.engine,projectId:input.projectId,kind:definition.projectKind,files:[{path:"factory/project-manifest.json",content:manifest}],buildTargets:definition.buildTargets,provenance:{factory:"AI GAME FACTORY",generatedAt,engine:input.engine}};
+  const files = generateEngineProjectFiles({ engine: input.engine, projectId: input.projectId, name, generatedAt });
+  const validation = validateGeneratedProjectFiles(input.engine, files);
+  if (validation.length) throw new Error(validation.join(" | "));
+  return {engine:input.engine,projectId:input.projectId,kind:definition.projectKind,files,buildTargets:definition.buildTargets,provenance:{factory:"AI GAME FACTORY",generatedAt,engine:input.engine}};
 }
 
 export class GeneratedProjectEngineAdapter implements EngineAdapter {
@@ -75,7 +79,7 @@ export class GeneratedProjectEngineAdapter implements EngineAdapter {
       name: String(input.name || this.definition.name + " Project"),
       generatedAt: typeof input.generatedAt === "string" ? input.generatedAt : undefined,
     });
-    return { status:"succeeded" as const, artifacts:project.files.map(file => file.path), diagnostics:["Generated project manifest created for "+this.definition.name+"."] };
+    return { status:"succeeded" as const, artifacts:project.files.map(file => file.path), diagnostics:["Generated "+this.definition.name+" project scaffold created.", "Project files: "+project.files.length] };
   }
   async execute(operation: import("./engine-adapter").EngineOperation) {
     if (!(this.capabilities as readonly string[]).includes(operation.capability)) {
