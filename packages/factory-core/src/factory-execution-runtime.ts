@@ -6,13 +6,13 @@ import type { LudoAdapter } from "./ludo-api-mcp-adapter";
 import { createAIGameFactoryProject, markFactoryStage, type AIGameFactoryStage, type FactoryProjectContract } from "./ai-game-factory-pipeline";
 import { ProviderRouter, type ProviderPolicy } from "./provider-router";
 import { AssetRouter, type AssetRequest } from "./asset-router";
-import { executeBuildFarm } from "./build-farm";
+import { executeBuildFarm, type BuildFarmAdapter } from "./build-farm";
 
 export interface FactoryRuntimeOptions {
   providers?: ProviderAdapter[];
   engines?: EngineAdapter[];
   workers?: CloudWorker[];
-  buildFarm?: BuildAdapter;
+  buildFarm?: BuildFarmAdapter;
   providerPolicy?: ProviderPolicy;
   ludo?: LudoAdapter;
 }
@@ -41,7 +41,7 @@ export class FactoryExecutionRuntime {
   private readonly engines: EngineAdapter[];
   private readonly workers: CloudWorker[];
   private readonly providerPolicy?: ProviderPolicy;
-  private readonly buildFarm?: BuildAdapter;
+  private readonly buildFarm?: BuildFarmAdapter;
   private readonly ludo?: LudoAdapter;
 
   constructor(options: FactoryRuntimeOptions = {}) {
