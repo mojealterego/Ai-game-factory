@@ -40,7 +40,7 @@ permissions:
 
 jobs:
   android:
-    if: ${ inputs.target == 'android-apk' || inputs.target == 'android-aab' }}
+    if: ${{ inputs.target == 'android-apk' || inputs.target == 'android-aab' }}
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -57,7 +57,7 @@ jobs:
       - name: Validate Factory build request
         run: |
           set -euo pipefail
-          test -n "${{ inputs.projectId }}}"
+          test -n "${{ inputs.projectId }}"
           test -f settings.gradle.kts
           test -f build.gradle.kts
           test -f app/build.gradle.kts
