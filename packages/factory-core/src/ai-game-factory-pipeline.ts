@@ -74,7 +74,7 @@ export const FACTORY_INTEGRATION_SURFACE = {
   shared: [
     "Asset Factory", "3D Asset Factory", "3D Asset Pipeline", "Audio/Dubbing", "GGUF/Local Models",
     "Hugging Face", "AI Agent OS A00-A61", "GitHub", "Cloud Workspace",
-    "Build Center", "QA", "Security/IP", "No-Code Agent Builder", "Android Control Center"
+    "Build Center", "QA", "Security/IP", "No-Code Agent Builder", "Android Control Center", "Agent OS Runtime", "Cloud Worker Runtime", "Executable Factory Runtime", "Build Farm Runtime"
   ]
 } as const;
 
