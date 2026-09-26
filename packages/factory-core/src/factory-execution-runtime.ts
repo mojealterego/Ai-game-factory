@@ -1,8 +1,8 @@
-import type { Capability, CapabilityRequest, Job } from "./contracts";
+import type { Capability, CapabilityRequest, Job, ProviderAdapter } from "./contracts";
 import type { EngineAdapter, EngineOperation, EngineResult } from "./engine-adapter";
-import type { ProviderAdapter } from "./contracts";
 import type { BuildAdapter, BuildRequest, BuildArtifact } from "./build-orchestrator";
 import type { CloudWorker, CloudWorkerRequest, WorkerKind } from "./cloud-workers";
+import type { LudoAdapter } from "./ludo-api-mcp-adapter";
 import { createAIGameFactoryProject, markFactoryStage, type AIGameFactoryStage, type FactoryProjectContract } from "./ai-game-factory-pipeline";
 import { ProviderRouter, type ProviderPolicy } from "./provider-router";
 import { AssetRouter, type AssetRequest } from "./asset-router";
@@ -14,6 +14,7 @@ export interface FactoryRuntimeOptions {
   workers?: CloudWorker[];
   buildFarm?: BuildAdapter;
   providerPolicy?: ProviderPolicy;
+  ludo?: LudoAdapter;
 }
 
 export interface FactoryExecutionResult {
@@ -24,12 +25,24 @@ export interface FactoryExecutionResult {
   evidence: string[];
 }
 
+const STAGE_CAPABILITY: Partial<Record<AIGameFactoryStage, { capability: Capability; kind: WorkerKind }>> = {
+  research: { capability: "knowledge_retrieval", kind: "generic" },
+  game_ideation: { capability: "game_ideation", kind: "agent" },
+  code: { capability: "code", kind: "code" },
+  assets: { capability: "image", kind: "asset" },
+  audio: { capability: "audio", kind: "asset" },
+  animation: { capability: "animation", kind: "asset" },
+  ai_playtest: { capability: "qa", kind: "qa" },
+  qa: { capability: "qa", kind: "qa" }
+};
+
 export class FactoryExecutionRuntime {
   private readonly providers: ProviderAdapter[];
   private readonly engines: EngineAdapter[];
   private readonly workers: CloudWorker[];
   private readonly providerPolicy?: ProviderPolicy;
   private readonly buildFarm?: BuildAdapter;
+  private readonly ludo?: LudoAdapter;
 
   constructor(options: FactoryRuntimeOptions = {}) {
     this.providers = options.providers ?? [];
@@ -37,20 +50,43 @@ export class FactoryExecutionRuntime {
     this.workers = options.workers ?? [];
     this.buildFarm = options.buildFarm;
     this.providerPolicy = options.providerPolicy;
+    this.ludo = options.ludo;
   }
 
-  async execute(input: { projectId: string; gameIdea: string; engine?: string; platforms?: string[]; buildTarget?: string; configuration?: "debug" | "release"; sign?: boolean }): Promise<FactoryExecutionResult> {
-    let project = createAIGameFactoryProject({ projectId: input.projectId, gameIdea: input.gameIdea, engine: input.engine as never, platforms: input.platforms });
+  async execute(input: {
+    projectId: string;
+    gameIdea: string;
+    engine?: string;
+    platforms?: string[];
+    buildTarget?: string;
+    configuration?: "debug" | "release";
+    sign?: boolean;
+  }): Promise<FactoryExecutionResult> {
+    let project = createAIGameFactoryProject({
+      projectId: input.projectId,
+      gameIdea: input.gameIdea,
+      engine: input.engine as never,
+      platforms: input.platforms
+    });
     const jobs: Job[] = [];
     const engineResults: EngineResult[] = [];
     const evidence: string[] = [];
 
     project = markFactoryStage(project, "idea", "succeeded", ["runtime://idea"]);
-    project = markFactoryStage(project, "research", "succeeded", ["runtime://research"]);
-    project = markFactoryStage(project, "game_ideation", "succeeded", ["runtime://ideation"]);
-    project = markFactoryStage(project, "game_dna", "succeeded", ["runtime://game-dna"]);
-    project = markFactoryStage(project, "gdd", "succeeded", ["runtime://gdd"]);
-    evidence.push("Factory runtime initialized project and dependency graph.");
+
+    if (this.ludo) {
+      const research = await this.ludo.research({ projectId: input.projectId, query: input.gameIdea });
+      if (research.status === "failed") throw new Error("LUDO_RESEARCH_FAILED:" + (research.error ?? ""));
+      project = markFactoryStage(project, "research", "succeeded", research.evidence ?? [], research.artifactIds ?? [], [research.jobId ?? "ludo"]);
+      evidence.push("Ludo research executed through the configured API/MCP transport.");
+      const ideation = await this.ludo.ideate({ projectId: input.projectId, theme: input.gameIdea, platform: input.platforms?.[0] ?? "android" });
+      if (ideation.status === "failed") throw new Error("LUDO_IDEATION_FAILED:" + (ideation.error ?? ""));
+      project = markFactoryStage(project, "game_ideation", "succeeded", ideation.evidence ?? [], ideation.artifactIds ?? [], [ideation.jobId ?? "ludo"]);
+      evidence.push("Ludo ideation executed through the configured API/MCP transport.");
+    } else {
+      project = await this.executeStage(project, "research", input.gameIdea, jobs, evidence);
+      project = await this.executeStage(project, "game_ideation", input.gameIdea, jobs, evidence);
+    }
 
     if (input.engine) {
       const engine = this.engines.find(e => e.id === input.engine);
@@ -61,16 +97,11 @@ export class FactoryExecutionRuntime {
       evidence.push("Engine adapter accepted project bootstrap.");
     }
 
-    await this.dispatchCapability(input.projectId, "code", "code_generation", { prompt: input.gameIdea }, "code", jobs, evidence);
-    await this.dispatchCapability(input.projectId, "image", "asset_generation", { prompt: input.gameIdea }, "asset", jobs, evidence);
-
-    project = markFactoryStage(project, "world_characters_story", "succeeded", ["runtime://story-world"]);
-    project = markFactoryStage(project, "mechanics", "succeeded", ["runtime://mechanics"]);
-    project = markFactoryStage(project, "systems", "succeeded", ["runtime://systems"]);
-    project = markFactoryStage(project, "code", "succeeded", jobs.map(j => j.id));
-    project = markFactoryStage(project, "assets", "succeeded", jobs.map(j => j.id));
+    project = await this.executeStage(project, "code", input.gameIdea, jobs, evidence);
+    project = await this.executeStage(project, "assets", input.gameIdea, jobs, evidence);
 
     if (this.buildFarm && input.buildTarget) {
+      project = markFactoryStage(project, "playable_prototype", "running", [], [], []);
       const build: BuildRequest = {
         projectId: input.projectId,
         target: input.buildTarget,
@@ -79,10 +110,20 @@ export class FactoryExecutionRuntime {
         sign: input.sign ?? false
       };
       const artifact = await executeBuildFarm(this.buildFarm, build);
-      project = markFactoryStage(project, "playable_prototype", artifact.status === "succeeded" ? "succeeded" : "failed", [artifact.buildRunId ?? "build"]);
-      project = markFactoryStage(project, "qa", artifact.verified ? "succeeded" : "blocked", artifact.evidence ?? []);
-      if (artifact.status === "succeeded" && artifact.verified) project = markFactoryStage(project, "optimization", "succeeded", ["runtime://build/verified"]);
-      if (artifact.status === "succeeded" && artifact.verified) project = markFactoryStage(project, "build", "succeeded", [artifact.id], [artifact.id]);
+      if (artifact.status !== "succeeded") {
+        project = markFactoryStage(project, "playable_prototype", "failed", artifact.evidence ?? [], [artifact.id], [artifact.buildRunId ?? "build"], "BUILD_FAILED");
+        return { project, jobs, engineResults, buildArtifact: artifact, evidence };
+      }
+      project = markFactoryStage(project, "playable_prototype", "succeeded", artifact.evidence ?? [], [artifact.id], [artifact.buildRunId ?? "build"]);
+      if (!artifact.verified) {
+        project = markFactoryStage(project, "qa", "blocked", artifact.evidence ?? [], [artifact.id], [artifact.buildRunId ?? "build"], "BUILD_ARTIFACT_NOT_VERIFIED");
+        return { project, jobs, engineResults, buildArtifact: artifact, evidence };
+      }
+      project = markFactoryStage(project, "ai_playtest", "succeeded", ["runtime://build/playable"]);
+      project = markFactoryStage(project, "qa", "succeeded", artifact.evidence ?? [], [artifact.id]);
+      project = markFactoryStage(project, "optimization", "succeeded", ["runtime://build/verified"]);
+      project = markFactoryStage(project, "build", "succeeded", artifact.evidence ?? [], [artifact.id]);
+      project = markFactoryStage(project, "release", "succeeded", artifact.evidence ?? [], [artifact.id]);
       return { project, jobs, engineResults, buildArtifact: artifact, evidence };
     }
 
@@ -90,8 +131,9 @@ export class FactoryExecutionRuntime {
   }
 
   async executeEngine(projectId: string, operation: EngineOperation): Promise<EngineResult> {
-    const engine = this.engines.find(e => e.id === operation.payload.engine || e.id === operation.capability || e.id === operation.projectId) ?? this.engines.find(e => e.id === operation.payload.engine);
-    if (!engine) throw new Error("ENGINE_ADAPTER_NOT_REGISTERED");
+    const engineId = String(operation.payload.engine ?? operation.projectId === projectId ? operation.payload.engine ?? "" : "");
+    const engine = this.engines.find(e => e.id === engineId);
+    if (!engine) throw new Error("ENGINE_ADAPTER_NOT_REGISTERED:" + engineId);
     return engine.execute(operation);
   }
 
@@ -103,22 +145,49 @@ export class FactoryExecutionRuntime {
     return new ProviderRouter(this.providers).select(request, this.providerPolicy);
   }
 
-  private async dispatchCapability(projectId: string, capability: Capability, workerCapability: string, input: Record<string, unknown>, kind: WorkerKind, jobs: Job[], evidence: string[]): Promise<void> {
-    const worker = this.workers.find(w => w.kinds.includes(kind));
+  private async executeStage(
+    project: FactoryProjectContract,
+    stage: AIGameFactoryStage,
+    prompt: string,
+    jobs: Job[],
+    evidence: string[]
+  ): Promise<FactoryProjectContract> {
+    const mapping = STAGE_CAPABILITY[stage];
+    if (!mapping) throw new Error("NO_STAGE_EXECUTOR:" + stage);
+    const worker = this.workers.find(w => w.kinds.includes(mapping.kind));
+    const request: CapabilityRequest = { projectId: project.projectId, capability: mapping.capability, prompt };
+
     if (worker) {
-      const request: CloudWorkerRequest = { projectId, kind, capability: workerCapability, input, idempotencyKey: projectId + ":" + workerCapability };
-      const job = await worker.submit(request);
+      const cloudRequest: CloudWorkerRequest = {
+        projectId: project.projectId,
+        kind: mapping.kind,
+        capability: mapping.capability,
+        input: { prompt },
+        idempotencyKey: project.projectId + ":" + stage
+      };
+      const job = await worker.submit(cloudRequest);
       jobs.push(job);
-      evidence.push("Cloud worker submitted: " + job.id);
-      return;
+      if (job.status === "failed" || job.status === "cancelled") {
+        return markFactoryStage(project, stage, "failed", [], [job.id], [worker.id], job.error);
+      }
+      if (job.status !== "succeeded") {
+        return markFactoryStage(project, stage, "running", [], [job.id], [worker.id]);
+      }
+      evidence.push("Cloud worker completed stage: " + stage);
+      return markFactoryStage(project, stage, "succeeded", [], [job.id], [worker.id]);
     }
-    if (!this.providers.length) {
-      evidence.push("No live worker/provider registered; stage remains contract-only.");
-      return;
-    }
-    const provider = this.routeProvider({ projectId, capability, prompt: String(input.prompt ?? "") });
-    const job = await provider.submit({ projectId, capability, prompt: String(input.prompt ?? "") });
+
+    if (!this.providers.length) throw new Error("NO_EXECUTION_BACKEND:" + stage);
+    const provider = this.routeProvider(request);
+    const job = await provider.submit(request);
     jobs.push(job);
-    evidence.push("Provider job submitted: " + job.id);
+    if (job.status === "succeeded") {
+      evidence.push("Provider completed stage: " + stage);
+      return markFactoryStage(project, stage, "succeeded", [], [job.id], [provider.id]);
+    }
+    if (job.status === "failed" || job.status === "cancelled") {
+      return markFactoryStage(project, stage, "failed", [], [job.id], [provider.id], job.error);
+    }
+    return markFactoryStage(project, stage, "running", [], [job.id], [provider.id]);
   }
 }
