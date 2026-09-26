@@ -2,6 +2,7 @@ import {
   applyDramaDecision,
   createDramaState,
   resolveEnding,
+  enterDramaScene,
   evaluateQTE,
   evaluateInvestigation,
   buildNarrativeFlowchart,
@@ -59,6 +60,9 @@ export function runCinematicDramaContractTests(): void {
   });
   assert(consequenceState.world.variables.publicOpinion === 1, "immediate consequence must mutate state");
   assert(consequenceState.consequenceQueue.length === 1, "delayed consequence must be queued");
+  const afterScene = enterDramaScene(consequenceState, "s2");
+  assert(afterScene.world.flags.riot === true, "queued consequence must apply when its target scene is entered");
+  assert(afterScene.consequenceQueue.length === 0, "applied consequence must leave the queue");
 
   const endingState = applyDramaDecision(state, {
     id: "d3",
