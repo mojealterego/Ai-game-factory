@@ -16,7 +16,7 @@ Premium Android-first command center for an engine-agnostic AI game production f
 - Asset Factory (10-stage Concept → Reference → Generation → Variation → Selection → Editing → Optimization → Metadata → Import → Engine Asset pipeline for concept art, characters, environments, props, weapons, vehicles, UI, icons, textures, materials, sprites, backgrounds, VFX, thumbnails and promotional graphics)
 - Tripo-style 3D generation/processing pipeline
 - Unity AI adapter
-- Audio, music, speech and dubbing
+- Audio / Dubbing Factory (music, soundtrack, ambient, SFX, footsteps, UI sounds, cinematic sound, voice generation, dubbing, lip-sync, dialogue timing, multilingual voice and capability-based provider routing)
 - Local Models / GGUF
 - Hugging Face
 - Provider Router / model cascade
