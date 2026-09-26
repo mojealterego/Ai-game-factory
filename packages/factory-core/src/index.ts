@@ -20,3 +20,4 @@ export * from "./renpy-adapter";
 export * from "./engine-registry";
 export * from "./engine-project-generator";
 export * from "./engine-build-worker";
+export * from "./model-factory";
