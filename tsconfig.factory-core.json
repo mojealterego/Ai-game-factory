@@ -44,10 +44,16 @@
     "packages/factory-core/src/ai-game-factory-pipeline.ts",
     "packages/factory-core/src/ai-game-factory-pipeline.test.ts",
     "packages/factory-core/src/three-d-asset-factory.ts",
-    "packages/factory-core/src/three-d-asset-factory.test.ts"
+    "packages/factory-core/src/three-d-asset-factory.test.ts",
     "packages/factory-core/src/unity-engine-adapter.ts",
     "packages/factory-core/src/unity-asset-generator.ts",
     "packages/factory-core/src/asset-router.ts",
-    "packages/factory-core/src/unity-engine-adapter.test.ts"
+    "packages/factory-core/src/unity-engine-adapter.test.ts",
+    "packages/factory-core/src/agent-runtime.ts",
+    "packages/factory-core/src/cloud-workers.ts",
+    "packages/factory-core/src/build-farm.ts",
+    "packages/factory-core/src/ludo-runtime.ts",
+    "packages/factory-core/src/factory-execution-runtime.ts",
+    "packages/factory-core/src/factory-execution-runtime.test.ts"
   ]
 }
