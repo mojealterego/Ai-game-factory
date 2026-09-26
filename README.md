@@ -108,3 +108,8 @@ The adapter is engine-owned: it does not bundle Unity Editor, Unity AI models or
 The shared Asset Router can route AssetRequest workloads between Unity-native generation, Tripo, OpenAI, Gemini, Stability, Replicate, Fal, Hugging Face, Local GGUF and custom providers.
 
 See docs/UNITY-ENGINE-ADAPTER.md.
+
+
+## Executable Factory Runtime
+
+Factory Core now includes an execution boundary connecting Agent OS, Cloud Workers, Provider/Ludo adapters, Engine Adapters and Build Farm. See docs/EXECUTION-RUNTIME.md. The GitHub Actions Build Farm workflow supports real Android APK/AAB compilation from apps/android-native.
