@@ -19,7 +19,7 @@ const names = [
   "Game Balance Agent","Mobile Optimization Agent","Performance Agent","Provider Router Agent",
   "Model Registry Agent","Game Knowledge Agent","Research Agent","Ideation Agent","GDD Compiler",
   "Game Compiler","World Simulation Agent","NPC Intelligence Agent","Multiplayer Agent",
-  "Monetization Systems Agent","Store Publishing Agent","Telemetry Agent","Factory Orchestrator"
+  "Monetization Systems Agent","Store Publishing Agent","Telemetry Agent"
 ] as const;
 
 export const AGENT_REGISTRY: FactoryAgent[] = names.map((name, index) => ({
