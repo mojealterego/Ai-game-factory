@@ -198,11 +198,11 @@ export class FactoryExecutionRuntime {
     const finalJob = await this.waitForProvider(provider, job, 30_000);
     if (finalJob.status === "succeeded") {
       evidence.push("Provider completed stage: " + stage);
-      return markFactoryStage(project, stage, "succeeded", [], [job.id], [provider.id]);
+      return markFactoryStage(project, stage, "succeeded", [], [finalJob.id], [provider.id]);
     }
     if (job.status === "failed" || job.status === "cancelled") {
       return markFactoryStage(project, stage, "failed", [], [job.id], [provider.id], job.error);
     }
-    return markFactoryStage(project, stage, "running", [], [job.id], [provider.id]);
+    return markFactoryStage(project, stage, "running", [], [finalJob.id], [provider.id]);
   }
 }
