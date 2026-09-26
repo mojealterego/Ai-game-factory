@@ -27,6 +27,8 @@
     "packages/factory-core/src/qa.ts",
     "packages/factory-core/src/qa.test.ts",
     "packages/factory-core/src/no-code-agent-builder.ts",
-    "packages/factory-core/src/no-code-agent-builder.test.ts"
+    "packages/factory-core/src/no-code-agent-builder.test.ts",
+    "packages/factory-core/src/security-ip.ts",
+    "packages/factory-core/src/security-ip.test.ts"
   ]
 }
