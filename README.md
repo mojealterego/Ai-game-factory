@@ -44,7 +44,15 @@ The repository documents public capability patterns from Quantic Dream, Rosebud 
 
 ## Native Android
 
-`apps/android-native/` contains the Kotlin/Compose foundation for the native Control Center. The production release pipeline is designed to generate and verify signed APK/AAB artifacts from real build evidence.
+`apps/android-native/` contains the Kotlin/Compose Control Center. GitHub Actions now performs real Gradle builds for debug APK, release APK and AAB and uploads the resulting artifacts. The current CI artifacts are build outputs; production signing still requires a configured signing identity/secret and is intentionally not fabricated.
+
+## Engine generation and build workers
+
+The engine-neutral layer is now executable at the contract level:
+- `engine-project-generator.ts` generates concrete starter files for Unreal, Unity, Godot, Cocos Creator, Defold, Stride, MonoGame, Bevy, O3DE, HTML5/Web, Ren'Py and Custom Runtime.
+- `engine-build-worker.ts` resolves engine/target-specific CLI commands and exposes a process-runner interface for cloud workers.
+- `engine-registry.ts` binds the concrete generators into `Factory Core → Engine Adapter → Generated Project`.
+- External engine SDKs remain worker dependencies; Factory Core never pretends that an unavailable proprietary SDK was executed.
 
 ## Documentation
 
