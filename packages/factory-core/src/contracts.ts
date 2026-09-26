@@ -9,7 +9,7 @@ export type Capability =
   | "cinematic_sound" | "voice_generation" | "dubbing" | "lip_sync" | "dialogue_timing"
   | "multilingual_voice" | "voice" | "text_to_3d" | "image_to_3d" | "multiview_to_3d"
   | "mesh_processing" | "texturing" | "rigging" | "animation"
-  | "retargeting" | "local_inference" | "build" | "qa";
+  | "retargeting" | "local_inference" | "embedding" | "speech_to_text" | "build" | "qa";
 
 export interface CapabilityRequest {
   projectId: string;
