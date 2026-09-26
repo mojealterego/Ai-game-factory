@@ -67,3 +67,42 @@ Provider selection remains delegated to the Factory provider router.
 ## Story -> Game
 
 compileStoryToGame() produces a deterministic manifest connecting narrative content to runtime capabilities such as narrative runtime, gameplay logic, code, audio, voice, video and QA.
+
+
+## Cinematic Interactive Drama Framework
+
+The factory exposes a dedicated engine-agnostic interactive-drama runtime contract in `narrative.ts`.
+
+### Runtime subsystems
+
+| Subsystem | Factory responsibility |
+|---|---|
+| Story State | Persistent scene, decision, visit and replay state |
+| World State | Mutable variables and flags representing the wider world |
+| Character State | Alive/dead state and character variables |
+| Relationship Graph | Directed relationships with bounded scores and history |
+| Decision Graph | Branching scene targets and decision history |
+| Consequence Engine | Immediate and queued delayed consequences |
+| Scene Graph | Scene-to-scene and scene-to-ending topology |
+| QTE System | Deterministic success/failure timing |
+| Timed Decisions | Existing timed-choice contracts and timeout targets |
+| Investigation System | Clue collection and deduction resolution |
+| Camera Director | Existing camera cues and actor blocking |
+| Cinematic Sequencer | Existing beat timing, camera cues and blocking |
+| Continuity Doctor | Structural target/character continuity diagnostics |
+| Ending Resolver | State-based ending resolution |
+| Replay / Alternative Paths | Flowchart generation and persisted visited/decision paths |
+
+### Character fate
+
+A playable character can become unavailable without forcing a global game-over. The runtime retains the story state and selects another living playable character when the active character dies.
+
+### Evidence boundary
+
+The framework is an original implementation based on publicly documented interactive-drama patterns. Quantic Dream's public materials describe branching narratives, consequential choices, multiple playable characters, character death without necessarily ending the story, replay/alternative paths and flowcharts. The Factory does not reproduce proprietary Quantic Dream source code, assets or unpublished implementation details.
+
+### References
+
+- Quantic Dream — Detroit: Become Human official page: https://www.quanticdream.com/en/detroit-become-human
+- Quantic Dream — studio history / Detroit production overview: https://www.quanticdream.com/en/our-story
+- PlayStation Blog — Detroit branching/flowchart discussion: https://blog.playstation.com/archive/2018/04/23/7-things-youll-notice-in-your-first-30-minutes-of-detroit-become-human/
