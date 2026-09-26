@@ -26,3 +26,5 @@ export * from "./game-knowledge-hub";
 export * from "./github-git";
 export * from "./build-center";
 export * from "./qa";
+export * from "./no-code-agent-builder";
+
