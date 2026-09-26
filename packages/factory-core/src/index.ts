@@ -5,6 +5,7 @@ export * from "./asset-pipeline";
 export * from "./provenance";
 export * from "./build-orchestrator";
 export * from "./state";
+export * from "./game-dna";
 export * from "./project-manager";
 export * from "./task-queue";
 export * from "./checkpoints";
