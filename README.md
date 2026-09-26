@@ -92,3 +92,8 @@ IDEA → RESEARCH → GAME IDEATION → GAME DNA → GDD → WORLD/CHARACTERS/ST
 The four intelligence domains are unified under Factory Core: Research, Creation, Story World, and Cinematic Drama. Ludo is connected through an explicit API/MCP adapter contract, while engine-specific execution remains behind EngineAdapter.
 
 See docs/AI-GAME-FACTORY-ARCHITECTURE.md for the canonical architecture.
+
+
+### 3D Asset Factory
+
+Complete game-ready 3D pipeline: Text/Image/Multi-view/Concept → generation → Smart Mesh → high detail → segmentation → retopology → polygon optimization → UV → AI Texture → PBR → Auto Rig → Animation → LOD0-LOD3 → collision → optimization → QA/performance → provenance → GLB/FBX/OBJ/USD/Unity/Unreal/Godot/Cocos. Includes an Asset Optimization Agent with mobile/web/PC/console/VR profiles and a Tripo API v3 adapter contract.
