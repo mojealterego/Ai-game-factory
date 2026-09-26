@@ -39,6 +39,55 @@ export type AssetStage =
   | "import"
   | "engine_asset";
 
+export type ThreeDInputMode = "text" | "image" | "reference";
+
+export type ThreeDStage =
+  | "input" | "generation" | "mesh_processing" | "topology" | "uv"
+  | "textures" | "pbr" | "materials" | "rigging" | "animation" | "lod"
+  | "collision" | "optimization" | "engine_export" | "asset_validation";
+
+export const THREE_D_ASSET_PIPELINE: readonly ThreeDStage[] = [
+  "input", "generation", "mesh_processing", "topology", "uv", "textures",
+  "pbr", "materials", "rigging", "animation", "lod", "collision",
+  "optimization", "engine_export", "asset_validation",
+] as const;
+
+export interface ThreeDAssetRequirements {
+  inputMode: ThreeDInputMode;
+  targetEngine?: string;
+  targetPlatform?: string;
+  polygonBudget?: number;
+  textureResolution?: number;
+  lodCount?: number;
+  rigRequired?: boolean;
+  animationRequired?: boolean;
+  collisionRequired?: boolean;
+  pbrRequired?: boolean;
+  exportFormat?: string;
+}
+
+export interface ThreeDStageRecord {
+  stage: ThreeDStage;
+  status: AssetStageStatus;
+  inputArtifactIds: string[];
+  outputArtifactIds: string[];
+  metrics?: Record<string, number | string | boolean>;
+  evidence?: string[];
+  error?: string;
+}
+
+export interface ThreeDAssetJob {
+  id: string;
+  assetId: string;
+  requirements: ThreeDAssetRequirements;
+  status: "queued" | "running" | "succeeded" | "failed" | "cancelled";
+  currentStage: ThreeDStage;
+  stages: ThreeDStageRecord[];
+  engineAssetId?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export type AssetStageStatus =
   | "pending"
   | "queued"
