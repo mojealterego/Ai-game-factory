@@ -1,0 +1,9 @@
+{
+  "repository": "mojealterego/Ai-game-factory",
+  "defaultBranch": "main",
+  "sourceOfTruth": "github",
+  "snapshotRoot": ".factory/snapshots/",
+  "generatedRoots": {"code":"generated/code/","assets":"generated/assets/","documentation":"generated/docs/"},
+  "versioning": {"scheme":"semver","tagPrefix":"v"},
+  "syncPolicy": {"generatedArtifactsRequireManifest":true,"snapshotsAreImmutable":true,"secretsAllowedInGit":false}
+}
