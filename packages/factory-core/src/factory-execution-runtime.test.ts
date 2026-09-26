@@ -7,7 +7,7 @@ const assert = (v: boolean, m: string) => { if (!v) throw new Error(m); };
 export async function runFactoryExecutionRuntimeTests(): Promise<void> {
   const provider: ProviderAdapter = {
     id: "test-provider",
-    capabilities: ["code", "image"],
+    capabilities: ["knowledge_retrieval", "game_ideation", "gameplay_logic", "gdd", "story", "code", "image", "audio", "animation", "video"],
     async submit(request) { return { id: "job-1", projectId: request.projectId, capability: request.capability, providerId: "test-provider", status: "queued", progress: 0, input: {} , createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() }; },
     async getJob(jobId) { return { id: jobId, projectId: "p", capability: "code", providerId: "test-provider", status: "succeeded", progress: 100, input: {}, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() }; }
   };
@@ -19,7 +19,7 @@ export async function runFactoryExecutionRuntimeTests(): Promise<void> {
   };
   const runtime = new FactoryExecutionRuntime({ providers: [provider], engines: [engine] });
   const result = await runtime.execute({ projectId: "p", gameIdea: "test game", engine: "godot" });
-  assert(result.jobs.length === 2, "runtime must dispatch code and asset jobs");
+  assert(result.jobs.length === 12, "runtime must dispatch all dependency-ordered pre-build stages");
   assert(result.engineResults.length === 1, "runtime must bootstrap the selected engine");
   assert(result.project.stages.find(s => s.stage === "code")?.status === "succeeded", "code stage must be advanced");
 }
