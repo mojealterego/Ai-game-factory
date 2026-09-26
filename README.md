@@ -4,7 +4,7 @@ Premium Android-first command center for an engine-agnostic AI game production f
 
 ## Product scope
 
-- Game Research Lab / Game Ideator
+- Game Research Lab / Reference & Ideation Engine / Game Ideator
 - Game DNA / GDD / AI Game Compiler
 - A00-A61 Agent OS
 - Cinematic Narrative Engine
@@ -62,6 +62,7 @@ The engine-neutral layer is now executable at the contract level:
 - [Reference capability matrix](docs/REFERENCE-MATRIX.md)
 - [Cinematic Narrative Engine](docs/CINEMATIC-NARRATIVE-ENGINE.md)
 - [AI Game Builder Engine](docs/AI-GAME-BUILDER-ENGINE.md)
+- [Reference & Ideation Engine](docs/REFERENCE-IDEATION-ENGINE.md)
 - [AI Game Compiler](docs/AI-GAME-COMPILER.md)
 - [Asset Factory](docs/ASSET-FACTORY.md)
 - [3D Asset Factory](docs/3D-ASSET-FACTORY.md)
