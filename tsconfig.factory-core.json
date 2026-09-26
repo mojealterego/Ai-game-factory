@@ -10,6 +10,8 @@
   "include": [
     "packages/factory-core/src/contracts.ts",
     "packages/factory-core/src/ai-game-builder-engine.ts",
+    "packages/factory-core/src/reference-ideation-engine.ts",
+    "packages/factory-core/src/reference-ideation-engine.test.ts",
     "packages/factory-core/src/ai-game-builder-engine.test.ts",
     "packages/factory-core/src/narrative.ts",
     "packages/factory-core/src/narrative.test.ts",
