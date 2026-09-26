@@ -188,7 +188,7 @@ export class FactoryExecutionRuntime {
         return markFactoryStage(project, stage, "running", [], [finalJob.id], [worker.id]);
       }
       evidence.push("Cloud worker completed stage: " + stage);
-      return markFactoryStage(project, stage, "succeeded", [], [job.id], [worker.id]);
+      return markFactoryStage(project, stage, "succeeded", [], [finalJob.id], [worker.id]);
     }
 
     if (!this.providers.length) throw new Error("NO_EXECUTION_BACKEND:" + stage);
