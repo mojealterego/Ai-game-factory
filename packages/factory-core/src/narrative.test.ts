@@ -9,6 +9,10 @@ import {
   type CinematicDramaProject
 } from "./narrative";
 
+const assert = (condition: boolean, message: string) => {
+  if (!condition) throw new Error(message);
+};
+
 const project: CinematicDramaProject = {
   story: {
     id: "story-1",
@@ -29,58 +33,48 @@ const project: CinematicDramaProject = {
   decisions: [],
   consequences: [],
   endings: [
-    { id: "end-good", title: "Good", conditions: [{ key: "world.publicOpinion", equals: 1 }] },
-    { id: "end-bad", title: "Bad", conditions: [{ key: "world.publicOpinion", equals: -1 }] }
+    { id: "end-good", title: "Good", conditions: [{ key: "world.variables.publicOpinion", equals: 1 }] },
+    { id: "end-bad", title: "Bad", conditions: [{ key: "world.variables.publicOpinion", equals: -1 }] }
   ]
 };
 
-describe("Cinematic Interactive Drama Framework", () => {
-  it("keeps the story alive when a playable character dies", () => {
-    const state = createDramaState(project);
-    const next = applyDramaDecision(state, {
-      id: "d1",
-      label: "Sacrifice A",
-      mutations: [{ path: "characters.a.alive", value: false }],
-      nextSceneId: "s2"
-    });
-    expect(next.characters.a.alive).toBe(false);
-    expect(next.activePlayableCharacterId).toBe("b");
-    expect(next.currentSceneId).toBe("s2");
+export function runCinematicDramaContractTests(): void {
+  const state = createDramaState(project);
+  const deadCharacter = applyDramaDecision(state, {
+    id: "d1",
+    label: "Sacrifice A",
+    mutations: [{ path: "characters.a.alive", value: false }],
+    nextSceneId: "s2"
   });
+  assert(deadCharacter.characters.a.alive === false, "dead playable character must remain dead");
+  assert(deadCharacter.activePlayableCharacterId === "b", "runtime must switch to a living playable character");
+  assert(deadCharacter.currentSceneId === "s2", "decision must advance to its target scene");
 
-  it("applies immediate and queues delayed consequences", () => {
-    const state = createDramaState(project);
-    const next = applyDramaDecision(state, {
-      id: "d2",
-      label: "Public speech",
-      mutations: [{ path: "world.variables.publicOpinion", value: 1 }],
-      delayedConsequences: [{ sceneId: "s2", mutations: [{ path: "world.flags.riot", value: true }] }],
-      nextSceneId: "s2"
-    });
-    expect(next.world.variables.publicOpinion).toBe(1);
-    expect(next.consequenceQueue).toHaveLength(1);
+  const consequenceState = applyDramaDecision(state, {
+    id: "d2",
+    label: "Public speech",
+    mutations: [{ path: "world.variables.publicOpinion", value: 1 }],
+    delayedConsequences: [{ sceneId: "s2", mutations: [{ path: "world.flags.riot", value: true }] }],
+    nextSceneId: "s2"
   });
+  assert(consequenceState.world.variables.publicOpinion === 1, "immediate consequence must mutate state");
+  assert(consequenceState.consequenceQueue.length === 1, "delayed consequence must be queued");
 
-  it("resolves endings from the accumulated state", () => {
-    const state = createDramaState(project);
-    const next = applyDramaDecision(state, {
-      id: "d3",
-      label: "Win trust",
-      mutations: [{ path: "world.variables.publicOpinion", value: 1 }]
-    });
-    expect(resolveEnding(project.endings, next)?.id).toBe("end-good");
+  const endingState = applyDramaDecision(state, {
+    id: "d3",
+    label: "Win trust",
+    mutations: [{ path: "world.variables.publicOpinion", value: 1 }]
   });
+  assert(resolveEnding(project.endings, endingState)?.id === "end-good", "ending resolver must use accumulated state");
 
-  it("evaluates QTE and investigation outcomes deterministically", () => {
-    expect(evaluateQTE({ durationMs: 1000, input: "tap", successInput: "tap", elapsedMs: 500 })).toBe("success");
-    expect(evaluateQTE({ durationMs: 1000, input: "tap", successInput: "tap", elapsedMs: 1200 })).toBe("failure");
-    expect(evaluateInvestigation({ clueIds: ["c1", "c2"], requiredClueIds: ["c1", "c2"] })).toBe(true);
-  });
+  assert(evaluateQTE({ durationMs: 1000, input: "tap", successInput: "tap", elapsedMs: 500 }) === "success", "QTE success must be deterministic");
+  assert(evaluateQTE({ durationMs: 1000, input: "tap", successInput: "tap", elapsedMs: 1200 }) === "failure", "QTE timeout must fail");
+  assert(evaluateInvestigation({ clueIds: ["c1", "c2"], requiredClueIds: ["c1", "c2"] }), "investigation must resolve when all required clues exist");
 
-  it("builds a replayable narrative flowchart and reports continuity errors", () => {
-    const flow = buildNarrativeFlowchart(project);
-    expect(flow.nodes).toHaveLength(5);
-    const broken = { ...project, story: { ...project.story, scenes: [{ ...project.story.scenes[0], nextSceneIds: ["missing"] }] } };
-    expect(validateContinuity(broken).some(issue => issue.severity === "error")).toBe(true);
-  });
-});
+  const flow = buildNarrativeFlowchart(project);
+  assert(flow.nodes.length === 5, "flowchart must contain scenes and endings");
+  const broken = { ...project, story: { ...project.story, scenes: [{ ...project.story.scenes[0], nextSceneIds: ["missing"] }] } };
+  assert(validateContinuity(broken).some(issue => issue.severity === "error"), "continuity doctor must report missing targets");
+}
+
+runCinematicDramaContractTests();
