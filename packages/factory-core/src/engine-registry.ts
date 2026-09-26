@@ -1,6 +1,7 @@
 import type { EngineId } from "./contracts";
 import type { EngineAdapter, EngineCapability } from "./engine-adapter";
 import { RenPyEngineAdapter } from "./renpy-adapter";
+import { UnityEngineAdapter } from "./unity-engine-adapter";
 import { generateEngineProjectFiles, validateGeneratedProjectFiles } from "./engine-project-generator";
 import type { EngineProjectFile } from "./engine-project-generator";
 
@@ -96,6 +97,7 @@ export class GeneratedProjectEngineAdapter implements EngineAdapter {
 }
 
 export function createEngineAdapter(id:EngineId):EngineAdapter {
+  if (id==="unity") return new UnityEngineAdapter();
   if (id==="renpy") return new RenPyEngineAdapter();
   return new GeneratedProjectEngineAdapter(getEngineDefinition(id));
 }
