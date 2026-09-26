@@ -30,6 +30,20 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: "8.13"
+      - name: Install exact supplied AI Game Factory icon
+        shell: bash
+        run: |
+          set -euo pipefail
+          ICON_URL="https://ec24441a-b74b-49ac-afbb-cbd919df26b6.sandbox.floot.app/_cdn/static/00d7946f-a914-46af-b902-0c4ccd2eb970-file_00000000a6908210892ae7c870d5d672.png"
+          mkdir -p app/src/main/res/mipmap-mdpi app/src/main/res/mipmap-hdpi app/src/main/res/mipmap-xhdpi app/src/main/res/mipmap-xxhdpi app/src/main/res/mipmap-xxxhdpi
+          curl --fail --location --retry 3 "$ICON_URL" -o /tmp/ai-game-factory-icon.png
+          test -s /tmp/ai-game-factory-icon.png
+          cp /tmp/ai-game-factory-icon.png app/src/main/res/mipmap-mdpi/ic_launcher.png
+          cp /tmp/ai-game-factory-icon.png app/src/main/res/mipmap-hdpi/ic_launcher.png
+          cp /tmp/ai-game-factory-icon.png app/src/main/res/mipmap-xhdpi/ic_launcher.png
+          cp /tmp/ai-game-factory-icon.png app/src/main/res/mipmap-xxhdpi/ic_launcher.png
+          cp /tmp/ai-game-factory-icon.png app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
+          sha256sum /tmp/ai-game-factory-icon.png | tee app/src/main/res/mipmap-mdpi/ICON-SHA256.txt
       - name: Build installable debug APK
         run: gradle --no-daemon clean assembleDebug
       - name: Verify APK
