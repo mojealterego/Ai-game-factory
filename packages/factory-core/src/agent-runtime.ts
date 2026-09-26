@@ -59,7 +59,7 @@ export class AgentOSRuntime {
 }
 
 function evaluateCondition(expression: string, values: Record<string, unknown>): boolean {
-  const match = expression.match(/^([A-Za-z0-9_.-]+)\\s*(===|==|!==|!=|truthy)\\s*(.*)$/);
+  const match = expression.match(/^([A-Za-z0-9_.-]+)\s*(===|==|!==|!=|truthy)\s*(.*)$/);
   if (!match) return false;
   const actual = values[match[1]];
   const expected = match[3]?.replace(/^['"]|['"]$/g, "");
