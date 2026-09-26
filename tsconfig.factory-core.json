@@ -19,6 +19,8 @@
     "packages/factory-core/src/huggingface-hub.ts",
     "packages/factory-core/src/huggingface-hub.test.ts",
     "packages/factory-core/src/game-knowledge-hub.ts",
-    "packages/factory-core/src/game-knowledge-hub.test.ts"
+    "packages/factory-core/src/game-knowledge-hub.test.ts",
+    "packages/factory-core/src/github-git.ts",
+    "packages/factory-core/src/github-git.test.ts"
   ]
 }
