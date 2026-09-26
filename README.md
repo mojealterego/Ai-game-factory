@@ -66,6 +66,7 @@ The engine-neutral layer is now executable at the contract level:
 - [3D Asset Factory](docs/3D-ASSET-FACTORY.md)
 - [AI Model Factory](docs/AI-MODEL-FACTORY.md)
 - [Build Center](docs/BUILD-CENTER.md)
+- [QA](docs/QA.md)
 - [Game Knowledge Hub](docs/GAME-KNOWLEDGE-HUB.md)
 - [Hugging Face Hub](docs/HUGGINGFACE-HUB.md)
 - [Unity AI Adapter](docs/UNITY-AI-ADAPTER.md)
