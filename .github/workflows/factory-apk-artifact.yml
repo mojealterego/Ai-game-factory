@@ -43,7 +43,7 @@ jobs:
           cp /tmp/ai-game-factory-icon.png app/src/main/res/mipmap-xhdpi/ic_launcher.png
           cp /tmp/ai-game-factory-icon.png app/src/main/res/mipmap-xxhdpi/ic_launcher.png
           cp /tmp/ai-game-factory-icon.png app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
-          sha256sum /tmp/ai-game-factory-icon.png | tee app/build/outputs/ai-game-factory-icon.sha256
+          sha256sum /tmp/ai-game-factory-icon.png | tee /tmp/ai-game-factory-icon.sha256
       - name: Build installable debug APK
         run: gradle --no-daemon clean assembleDebug
       - name: Verify APK
