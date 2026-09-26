@@ -439,3 +439,263 @@ export function compileStoryToGame(project: CinematicNarrativeProject, projectId
     engine
   };
 }
+
+
+export type DramaMutation = Mutation;
+
+export interface DramaStory {
+  id: string;
+  title: string;
+  playableCharacterIds: string[];
+  scenes: DramaScene[];
+}
+
+export interface DramaScene {
+  id: string;
+  playableCharacterId: string;
+  nextSceneIds: string[];
+  conditions: Condition[];
+}
+
+export interface DramaWorldState {
+  variables: Record<string, number | string | boolean>;
+  flags: Record<string, boolean>;
+}
+
+export interface DramaCharacterState {
+  alive: boolean;
+  variables: Record<string, number | string | boolean>;
+}
+
+export interface DramaRelationshipState {
+  id: string;
+  from: string;
+  to: string;
+  score: number;
+}
+
+export interface DramaConsequence {
+  sceneId: string;
+  mutations: Mutation[];
+}
+
+export interface DramaDecision {
+  id: string;
+  label: string;
+  mutations?: Mutation[];
+  delayedConsequences?: DramaConsequence[];
+  nextSceneId?: string;
+  relationshipDeltas?: Array<{ relationshipId: string; delta: number }>;
+}
+
+export interface DramaEnding {
+  id: string;
+  title: string;
+  conditions: Condition[];
+}
+
+export interface CinematicDramaProject {
+  story: DramaStory;
+  world: DramaWorldState;
+  characters: Record<string, DramaCharacterState> | Array<{ id: string } & DramaCharacterState>;
+  relationships: DramaRelationshipState[];
+  decisions: DramaDecision[];
+  consequences: DramaConsequence[];
+  endings: DramaEnding[];
+}
+
+export interface CinematicDramaState {
+  storyId: string;
+  currentSceneId: string;
+  activePlayableCharacterId: string;
+  world: DramaWorldState;
+  characters: Record<string, DramaCharacterState>;
+  relationships: Record<string, number>;
+  consequenceQueue: DramaConsequence[];
+  decisionHistory: string[];
+  visitedScenes: string[];
+}
+
+export interface QTEEvaluationInput {
+  durationMs: number;
+  input: string;
+  successInput: string;
+  elapsedMs: number;
+}
+
+export type QTEResult = "success" | "failure";
+
+export interface InvestigationEvaluation {
+  clueIds: string[];
+  requiredClueIds: string[];
+}
+
+export interface NarrativeFlowchartNode {
+  id: string;
+  kind: "scene" | "ending";
+  nextIds: string[];
+  playableCharacterId?: string;
+}
+
+export interface NarrativeFlowchart {
+  nodes: NarrativeFlowchartNode[];
+  startNodeId: string;
+  endingIds: string[];
+}
+
+export interface ContinuityDiagnostic {
+  id: string;
+  severity: "error" | "warning";
+  category: "scene" | "character" | "ending" | "relationship";
+  message: string;
+  sourceIds: string[];
+}
+
+export function createDramaState(project: CinematicDramaProject): CinematicDramaState {
+  const characters = Array.isArray(project.characters)
+    ? Object.fromEntries(project.characters.map(({ id, ...state }) => [id, { ...state }]))
+    : structuredClone(project.characters);
+  const firstScene = project.story.scenes[0];
+  return {
+    storyId: project.story.id,
+    currentSceneId: firstScene?.id ?? "",
+    activePlayableCharacterId: firstScene?.playableCharacterId ?? project.story.playableCharacterIds[0] ?? "",
+    world: structuredClone(project.world),
+    characters,
+    relationships: Object.fromEntries(project.relationships.map(r => [r.id, r.score])),
+    consequenceQueue: [],
+    decisionHistory: [],
+    visitedScenes: firstScene ? [firstScene.id] : []
+  };
+}
+
+function resolvePathValue(state: CinematicDramaState, path: string): unknown {
+  return path.split(".").reduce<unknown>((cursor, key) => {
+    if (cursor === null || cursor === undefined || typeof cursor !== "object") return undefined;
+    return (cursor as Record<string, unknown>)[key];
+  }, state as unknown);
+}
+
+function applyDramaMutation(state: CinematicDramaState, mutation: Mutation): CinematicDramaState {
+  const next = structuredClone(state);
+  const parts = mutation.path.split(".");
+  let cursor: Record<string, unknown> = next as unknown as Record<string, unknown>;
+  for (const part of parts.slice(0, -1)) {
+    const value = cursor[part];
+    if (!value || typeof value !== "object") cursor[part] = {};
+    cursor = cursor[part] as Record<string, unknown>;
+  }
+  cursor[parts.at(-1)!] = mutation.value;
+  return next;
+}
+
+function activateNextPlayableCharacter(
+  state: CinematicDramaState,
+  story: DramaStory,
+  preferredCharacterId?: string
+): CinematicDramaState {
+  const preferred = preferredCharacterId && state.characters[preferredCharacterId]?.alive
+    ? preferredCharacterId
+    : undefined;
+  if (preferred) return { ...state, activePlayableCharacterId: preferred };
+  const currentIndex = story.playableCharacterIds.indexOf(state.activePlayableCharacterId);
+  const ordered = [
+    ...story.playableCharacterIds.slice(currentIndex + 1),
+    ...story.playableCharacterIds.slice(0, currentIndex + 1)
+  ];
+  const next = ordered.find(id => state.characters[id]?.alive);
+  return next ? { ...state, activePlayableCharacterId: next } : state;
+}
+
+export function applyDramaDecision(
+  state: CinematicDramaState,
+  decision: DramaDecision,
+  project?: CinematicDramaProject
+): CinematicDramaState {
+  let next = structuredClone(state);
+  for (const mutation of decision.mutations ?? []) next = applyDramaMutation(next, mutation);
+  for (const delta of decision.relationshipDeltas ?? []) {
+    next.relationships[delta.relationshipId] = Math.max(-100, Math.min(100, (next.relationships[delta.relationshipId] ?? 0) + delta.delta));
+  }
+  next.consequenceQueue.push(...(decision.delayedConsequences ?? []));
+  next.decisionHistory.push(decision.id);
+  if (decision.nextSceneId) {
+    next.currentSceneId = decision.nextSceneId;
+    if (!next.visitedScenes.includes(decision.nextSceneId)) next.visitedScenes.push(decision.nextSceneId);
+    const scene = project?.story.scenes.find(item => item.id === decision.nextSceneId);
+    if (scene) next = activateNextPlayableCharacter(next, project.story, scene.playableCharacterId);
+  }
+  const deadActive = next.characters[next.activePlayableCharacterId]?.alive === false;
+  if (deadActive && project) next = activateNextPlayableCharacter(next, project.story);
+  return next;
+}
+
+export function resolveEnding(endings: DramaEnding[], state: CinematicDramaState): DramaEnding | undefined {
+  return endings.find(ending => ending.conditions.every(condition => resolvePathValue(state, condition.key) === condition.equals));
+}
+
+export function evaluateQTE(input: QTEEvaluationInput): QTEResult {
+  return input.elapsedMs <= input.durationMs && input.input === input.successInput ? "success" : "failure";
+}
+
+export function evaluateInvestigation(input: InvestigationEvaluation): boolean {
+  const clues = new Set(input.clueIds);
+  return input.requiredClueIds.every(id => clues.has(id));
+}
+
+export function buildNarrativeFlowchart(project: CinematicDramaProject): NarrativeFlowchart {
+  const nodes: NarrativeFlowchartNode[] = [
+    ...project.story.scenes.map(scene => ({
+      id: scene.id,
+      kind: "scene" as const,
+      nextIds: [...scene.nextSceneIds],
+      playableCharacterId: scene.playableCharacterId
+    })),
+    ...project.endings.map(ending => ({ id: ending.id, kind: "ending" as const, nextIds: [] }))
+  ];
+  return {
+    nodes,
+    startNodeId: project.story.scenes[0]?.id ?? "",
+    endingIds: project.endings.map(ending => ending.id)
+  };
+}
+
+export function validateContinuity(project: CinematicDramaProject): ContinuityDiagnostic[] {
+  const issues: ContinuityDiagnostic[] = [];
+  const sceneIds = new Set(project.story.scenes.map(scene => scene.id));
+  const characterIds = new Set(project.story.playableCharacterIds);
+  const endingIds = new Set(project.endings.map(ending => ending.id));
+  for (const scene of project.story.scenes) {
+    if (!characterIds.has(scene.playableCharacterId)) issues.push({
+      id: `unknown-character-${scene.id}`, severity: "error", category: "character",
+      message: "Scene references a character that is not playable in this story.",
+      sourceIds: [scene.id, scene.playableCharacterId]
+    });
+    for (const nextId of scene.nextSceneIds) {
+      if (!sceneIds.has(nextId) && !endingIds.has(nextId)) issues.push({
+        id: `missing-target-${scene.id}-${nextId}`, severity: "error", category: "scene",
+        message: "Scene references a missing narrative target.",
+        sourceIds: [scene.id, nextId]
+      });
+    }
+  }
+  return issues;
+}
+
+export const CINEMATIC_DRAMA_FRAMEWORK = [
+  "story_state",
+  "world_state",
+  "character_state",
+  "relationship_graph",
+  "decision_graph",
+  "consequence_engine",
+  "scene_graph",
+  "qte_system",
+  "timed_decisions",
+  "investigation_system",
+  "camera_director",
+  "cinematic_sequencer",
+  "continuity_doctor",
+  "ending_resolver",
+  "replay_alternative_paths"
+] as const;
