@@ -20,6 +20,46 @@ export interface EngineBuildCommand {
 
 const target = (value: string) => value.trim().toLowerCase();
 
+export interface EngineProcessResult {
+  exitCode: number;
+  stdout: string;
+  stderr: string;
+}
+
+export interface EngineProcessRunner {
+  run(command: EngineBuildCommand): Promise<EngineProcessResult>;
+}
+
+export interface EngineWorker {
+  build(request: EngineBuildRequest): Promise<EngineProcessResult>;
+}
+
+export function createEngineWorker(runner: EngineProcessRunner): EngineWorker {
+  return {
+    async build(request) {
+      const command = resolveEngineBuildCommand(request);
+      return runner.run(command);
+    },
+  };
+}
+
+function unityTarget(value: string): string {
+  const map: Record<string, string> = {
+    "android-apk": "android", "android-aab": "android", android: "android",
+    web: "webgl", webgl: "webgl", windows: "win64", linux: "linux64",
+    macos: "osxuniversal", ios: "ios",
+  };
+  return map[target(value)] || value;
+}
+
+function godotPreset(value: string): string {
+  const map: Record<string, string> = {
+    "android-apk": "Android", "android-aab": "Android", android: "Android",
+    web: "Web", windows: "Windows Desktop", linux: "Linux/X11", macos: "macOS",
+  };
+  return map[target(value)] || value;
+}
+
 export function resolveEngineBuildCommand(request: EngineBuildRequest): EngineBuildCommand {
   const cfg = request.configuration ?? "release";
   const out = request.outputPath ?? "build";
@@ -30,9 +70,9 @@ export function resolveEngineBuildCommand(request: EngineBuildRequest): EngineBu
     case "unreal":
       return { executable: "$UE_ROOT/RunUAT", args: ["BuildCookRun", "-Project=" + request.projectPath, "-Build", "-Cook", "-Stage", "-Package", "-NoP4", "-Archive", "-ArchiveDirectory=" + out, "-TargetPlatform=" + t], cwd: request.projectPath, notes: ["Requires a configured Unreal Engine installation and RunUAT."] };
     case "unity":
-      return { executable: "Unity", args: ["-batchmode", "-nographics", "-quit", "-projectPath", request.projectPath, "-buildTarget", t, "-executeMethod", "FactoryBuild.Build", "-factoryOutput", out, "-logFile", "-"], cwd: request.projectPath, notes: ["The generated project must provide FactoryBuild.Build; credentials/licensing remain external."] };
+      return { executable: "Unity", args: ["-batchmode", "-nographics", "-quit", "-projectPath", request.projectPath, "-buildTarget", unityTarget(t), "-executeMethod", "FactoryBuild.Build", "-factoryOutput", out, "-logFile", "-"], cwd: request.projectPath, notes: ["The generated project must provide FactoryBuild.Build; credentials/licensing remain external."] };
     case "godot":
-      return { executable: "godot", args: ["--headless", "--path", request.projectPath, "--export-" + (cfg === "debug" ? "debug" : "release"), request.target, out], cwd: request.projectPath, notes: ["Requires a matching export preset in export_presets.cfg and installed export templates."] };
+      return { executable: "godot", args: ["--headless", "--path", request.projectPath, "--export-" + (cfg === "debug" ? "debug" : "release"), godotPreset(t), out], cwd: request.projectPath, notes: ["Requires a matching export preset in export_presets.cfg and installed export templates."] };
     case "cocos":
       return { executable: "CocosCreator", args: ["--project", request.projectPath, "--build", "platform=" + t + ";debug=" + (cfg !== "release")], cwd: request.projectPath, notes: ["CLI flags depend on the installed Cocos Creator major version."] };
     case "defold":
