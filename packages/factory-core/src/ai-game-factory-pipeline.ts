@@ -64,6 +64,13 @@ export const FACTORY_INTEGRATION_SURFACE = {
   creation: ["AI Game Builder Engine", "Game DNA", "Engine Adapter System", "Provider Router", "No-Code Agent Builder"],
   storyWorld: ["AI Story World Engine", "Story Generator", "Game Knowledge Hub"],
   cinematicDrama: ["Cinematic Narrative Engine", "Cinematic Narrative Studio", "Continuity Doctor", "Camera/Cinematics runtime"],
+  engineAdapters: ["Unity Engine Adapter", "Unreal Adapter", "Godot Adapter", "Cocos Adapter", "Custom Adapter"],
+  unity: [
+    "Unity Project Context", "Scene Graph", "GameObjects", "Components", "Packages", "Scripts",
+    "Prefabs", "Materials", "Animations", "Terrain", "AI Assistant", "Code Agent", "Scene Agent",
+    "Unity Asset Generator", "Unity MCP Bridge", "Unity AI Gateway", "Sentis Runtime Boundary", "Build Adapter"
+  ],
+  assetRouting: ["AssetRequest", "Asset Router", "Unity Generator", "Tripo", "OpenAI", "Gemini", "Stability", "Replicate", "Fal", "Hugging Face", "Local GGUF", "Custom Provider"],
   shared: [
     "Asset Factory", "3D Asset Factory", "3D Asset Pipeline", "Audio/Dubbing", "GGUF/Local Models",
     "Hugging Face", "AI Agent OS A00-A61", "GitHub", "Cloud Workspace",
