@@ -1,4 +1,4 @@
-import type { Capability, CapabilityRequest, Job, ProviderAdapter } from "./contracts";
+import type { Capability, CapabilityRequest, Job, ProviderAdapter, EngineId } from "./contracts";
 import type { EngineAdapter, EngineOperation, EngineResult } from "./engine-adapter";
 import type { BuildRequest, BuildArtifact } from "./build-orchestrator";
 import type { CloudWorker, CloudWorkerRequest, WorkerKind } from "./cloud-workers";
@@ -72,7 +72,7 @@ export class FactoryExecutionRuntime {
     let project = createAIGameFactoryProject({
       projectId: input.projectId,
       gameIdea: input.gameIdea,
-      engine: input.engine as never,
+      engine: input.engine as EngineId | undefined,
       platforms: input.platforms
     });
     const jobs: Job[] = [];
