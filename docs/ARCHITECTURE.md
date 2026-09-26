@@ -26,3 +26,11 @@ No-code graph: Trigger → Intent → Planner → Provider Router → Tools → 
 
 ## Game engines
 Unreal, Unity, Godot, Cocos Creator, Defold, Stride, MonoGame, Bevy, O3DE, Ren'Py, HTML5/Web and future adapters. The Game DNA is engine-neutral; adapters map it to a target runtime.
+
+## Engine-neutral generation
+
+AI GAME FACTORY is engine-agnostic. The production boundary is:
+
+`Factory Core → Engine Adapter → Generated Project`
+
+The canonical engine catalog is: Unreal Engine, Unity, Godot, Cocos Creator, Defold, Stride, MonoGame, Bevy, O3DE, HTML5/WebGL, Ren'Py, and Custom Runtime. Factory Core owns Game DNA, orchestration, provenance and validation; an Engine Adapter translates that state into an engine-specific generated project contract; a build worker then invokes the actual engine/toolchain. This keeps the core independent of any single engine.
