@@ -13,6 +13,8 @@
     "packages/factory-core/src/renpy-adapter.ts",
     "packages/factory-core/src/engine-project-generator.ts",
     "packages/factory-core/src/engine-build-worker.ts",
-    "packages/factory-core/src/engine-registry.ts"
+    "packages/factory-core/src/engine-registry.ts",
+    "packages/factory-core/src/model-factory.ts",
+    "packages/factory-core/src/model-factory.test.ts"
   ]
 }
