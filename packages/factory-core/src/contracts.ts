@@ -1,6 +1,6 @@
 export type EngineId =
   | "unreal" | "unity" | "godot" | "cocos" | "defold" | "stride"
-  | "monogame" | "bevy" | "o3de" | "html5" | "custom";
+  | "monogame" | "bevy" | "o3de" | "html5" | "renpy" | "custom";
 
 export type Capability =
   | "game_ideation" | "gdd" | "story" | "narrative_runtime"
