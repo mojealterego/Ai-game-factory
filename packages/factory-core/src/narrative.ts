@@ -508,6 +508,7 @@ export interface CinematicDramaState {
   storyId: string;
   currentSceneId: string;
   activePlayableCharacterId: string;
+  playableCharacterIds: string[];
   world: DramaWorldState;
   characters: Record<string, DramaCharacterState>;
   relationships: Record<string, number>;
@@ -560,6 +561,7 @@ export function createDramaState(project: CinematicDramaProject): CinematicDrama
     storyId: project.story.id,
     currentSceneId: firstScene?.id ?? "",
     activePlayableCharacterId: firstScene?.playableCharacterId ?? project.story.playableCharacterIds[0] ?? "",
+    playableCharacterIds: [...project.story.playableCharacterIds],
     world: structuredClone(project.world),
     characters,
     relationships: Object.fromEntries(project.relationships.map(r => [r.id, r.score])),
@@ -626,7 +628,15 @@ export function applyDramaDecision(
     if (scene) next = activateNextPlayableCharacter(next, project.story, scene.playableCharacterId);
   }
   const deadActive = next.characters[next.activePlayableCharacterId]?.alive === false;
-  if (deadActive && project) next = activateNextPlayableCharacter(next, project.story);
+  if (deadActive) {
+    const story = project?.story ?? {
+      id: next.storyId,
+      title: next.storyId,
+      playableCharacterIds: next.playableCharacterIds,
+      scenes: []
+    };
+    next = activateNextPlayableCharacter(next, story);
+  }
   return next;
 }
 
