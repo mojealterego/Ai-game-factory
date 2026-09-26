@@ -25,6 +25,8 @@
     "packages/factory-core/src/build-center.ts",
     "packages/factory-core/src/build-center.test.ts",
     "packages/factory-core/src/qa.ts",
-    "packages/factory-core/src/qa.test.ts"
+    "packages/factory-core/src/qa.test.ts",
+    "packages/factory-core/src/no-code-agent-builder.ts",
+    "packages/factory-core/src/no-code-agent-builder.test.ts"
   ]
 }
