@@ -640,6 +640,30 @@ export function applyDramaDecision(
   return next;
 }
 
+export function applyQueuedConsequences(
+  state: CinematicDramaState,
+  sceneId: string
+): CinematicDramaState {
+  let next = structuredClone(state);
+  const due = next.consequenceQueue.filter(item => item.sceneId === sceneId);
+  next.consequenceQueue = next.consequenceQueue.filter(item => item.sceneId !== sceneId);
+  for (const consequence of due) {
+    for (const mutation of consequence.mutations) next = applyDramaMutation(next, mutation);
+  }
+  return next;
+}
+
+export function enterDramaScene(
+  state: CinematicDramaState,
+  sceneId: string
+): CinematicDramaState {
+  const next = applyQueuedConsequences(
+    { ...state, currentSceneId: sceneId, visitedScenes: state.visitedScenes.includes(sceneId) ? state.visitedScenes : [...state.visitedScenes, sceneId] },
+    sceneId
+  );
+  return next;
+}
+
 export function resolveEnding(endings: DramaEnding[], state: CinematicDramaState): DramaEnding | undefined {
   return endings.find(ending => ending.conditions.every(condition => resolvePathValue(state, condition.key) === condition.equals));
 }
