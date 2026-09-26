@@ -9,7 +9,7 @@ Premium Android-first command center for an engine-agnostic AI game production f
 - A00-A61 Agent OS
 - Cinematic Narrative Engine
 - Gameplay Systems / Simulation
-- Rosebud-style prompt-to-playable workflow
+- AI Game Builder Engine: Prompt → Game Spec → Game DNA → System Design → Code → Assets → World → Playable Build → Playtest → AI Analysis → Iteration
 - Fable-style living characters, memory and relationships
 - Ludo-style research/ideation and API/MCP adapter
 - Quantic Dream-inspired public narrative patterns: branching choices, consequences, character fate and cinematic flow
@@ -61,6 +61,7 @@ The engine-neutral layer is now executable at the contract level:
 - [Master specification](docs/MASTER-SPEC.md)
 - [Reference capability matrix](docs/REFERENCE-MATRIX.md)
 - [Cinematic Narrative Engine](docs/CINEMATIC-NARRATIVE-ENGINE.md)
+- [AI Game Builder Engine](docs/AI-GAME-BUILDER-ENGINE.md)
 - [AI Game Compiler](docs/AI-GAME-COMPILER.md)
 - [Asset Factory](docs/ASSET-FACTORY.md)
 - [3D Asset Factory](docs/3D-ASSET-FACTORY.md)
