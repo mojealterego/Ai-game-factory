@@ -188,3 +188,11 @@ https://ludo.ai/docs/api-mcp
 https://ludo.ai/blog/introducing-ludo-ai-api-mcp-integration
 https://ludo.ai/tools/game-asset-mcp-server
 https://docs.unity3d.com/Packages/com.unity.ai.assistant@2.0/manual/unity-mcp-overview.html
+
+## 3D Asset Factory
+
+The shared asset layer now includes the complete game-ready 3D Asset Factory: text/image/multiview/concept input, Smart Mesh, high detail, segmentation, retopology, polygon optimization, UV, AI texture, PBR materials, auto rig, animation, LOD0-LOD3, collision, quality/performance/provenance gates and GLB/FBX/OBJ/USD plus engine export targets.
+
+The Asset Optimization Agent selects mobile/web/PC/console/VR/custom profiles before engine import. Its output includes polygon budget, texture resolution, LOD budgets, collision policy, material complexity, draw-call budget and target memory.
+
+Tripo is integrated through an adapter contract for its asynchronous API v3 operations. The Factory remains provider-agnostic and does not expose provider credentials to Android clients.
