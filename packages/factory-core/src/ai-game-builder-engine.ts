@@ -263,7 +263,7 @@ export function compileGamePrompt(input: GameCreationPrompt): CompiledGamePlan {
   const features = inferFeatures(input.prompt);
   const genres = inferGenres(input.prompt, input.genre);
   const heroCount = numberFrom(text, ["bohater", "bohaterow", "hero", "heroes"], 1);
-  const endingCount = numberFrom(text, ["zakonczen", "zakonczenie", "ending", "endings"], 1);
+  const endingCount = numberFrom(text, ["zakonczen", "zakonczeni", "zakonczenie", "ending", "endings"], 1);
   const engine = inferEngine(input.prompt, input.engine);
   const spec: GameSpec = {
     projectId: input.projectId,
