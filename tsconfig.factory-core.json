@@ -39,6 +39,9 @@
     "packages/factory-core/src/security-ip.ts",
     "packages/factory-core/src/security-ip.test.ts",
     "packages/factory-core/src/android-control-center.ts",
-    "packages/factory-core/src/android-control-center.test.ts"
+    "packages/factory-core/src/android-control-center.test.ts",
+    "packages/factory-core/src/ludo-api-mcp-adapter.ts",
+    "packages/factory-core/src/ai-game-factory-pipeline.ts",
+    "packages/factory-core/src/ai-game-factory-pipeline.test.ts"
   ]
 }
