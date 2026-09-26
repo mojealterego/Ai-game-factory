@@ -47,19 +47,19 @@ private fun FactoryControlCenter() {
             Card {
                 Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
                     Text("Factory API: READY")
-                    Text("Agent Runtime: \${state.agents}")
-                    Text("Project Workspace: \${state.projectId ?: "NO PROJECT"}")
-                    Text("Cloud Workers: \${state.workers}")
-                    Text("Model Registry: \${state.models}")
-                    Text("Build Farm: \${state.buildFarm}")
-                    Text("QA: \${state.qa}")
-                    Text("Artifact: \${state.artifact}")
+                    Text("Agent Runtime: ${state.agents}")
+                    Text("Project Workspace: ${state.projectId ?: "NO PROJECT"}")
+                    Text("Cloud Workers: ${state.workers}")
+                    Text("Model Registry: ${state.models}")
+                    Text("Build Farm: ${state.buildFarm}")
+                    Text("QA: ${state.qa}")
+                    Text("Artifact: ${state.artifact}")
                 }
             }
             Button(onClick = {
                 state = state.copy(projectId = "android-session-project", pipelineStage = "GAME IDEA → GAME DNA", agents = "READY", workers = "READY")
             }) { Text("START GAME FACTORY") }
-            Text("Pipeline: \${state.pipelineStage}")
+            Text("Pipeline: ${state.pipelineStage}")
         }
     }
 }
