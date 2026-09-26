@@ -1,57 +1,105 @@
-# 3D Asset Factory
+# 3D Asset Pipeline
 
-## Unified pipeline
+## Full scope
 
-Text/Image/Multi-view/Reference
--> Generate
--> Inspect
--> Segment
--> Complete
--> Retopologize
--> Texture
--> UV/Material
--> Rig
--> Retarget
--> LOD
--> Collision
--> Optimize
--> Validate
--> Export
+The 3D Asset Pipeline is the production-grade specialization of the general Asset Factory.
 
-## Asset classes
+```text
+text → 3D
+image → 3D
+reference → 3D
+       ↓
+mesh processing
+       ↓
+topology
+       ↓
+UV
+       ↓
+textures
+       ↓
+PBR
+       ↓
+materials
+       ↓
+rigging
+       ↓
+animation
+       ↓
+LOD
+       ↓
+collision
+       ↓
+optimization
+       ↓
+engine export
+       ↓
+asset validation
+```
 
-- characters
-- creatures
-- NPCs
-- props
-- weapons
-- vehicles
-- buildings
-- environments
-- modular kits
-- foliage
-- VFX meshes
+## Typed pipeline
 
-## Profiles
+The canonical stages are represented by `ThreeDStage` and `THREE_D_ASSET_PIPELINE` in `packages/factory-core/src/assets.ts`.
 
-- Android Low
-- Android High
-- Web
-- PC
-- High-end cinematic
-- Custom
+The executable orchestration layer is `packages/factory-core/src/three-d-pipeline.ts`. External DCCs, generators and engine SDKs are injected as stage executors; Factory Core does not claim an external operation completed without an adapter result.
 
-Each profile specifies polygon, texture, shader, draw-call, memory and animation budgets.
+## Inputs
 
-## Tripo adapter
+- **Text → 3D**: structured prompt/brief to a compatible 3D generator.
+- **Image → 3D**: source image plus provenance and reconstruction constraints.
+- **Reference → 3D**: approved project references, identity constraints and source lineage.
 
-The Tripo adapter maps Factory jobs to asynchronous Tripo tasks and tracks task IDs, progress, output URLs, errors, credits and provenance. It must support text-to-model, image-to-model, multiview-to-model, texture, mesh operations and rigging/animation where the connected account exposes them.
+## Production stages
 
-## Validation
+| Stage | Required responsibility |
+|---|---|
+| Mesh processing | clean, repair, merge/separate, normals and geometry preparation |
+| Topology | inspect/retopologize and enforce topology constraints |
+| UV | unwrap, pack and validate UV sets |
+| Textures | generate/bake texture maps |
+| PBR | validate physically based map sets and conventions |
+| Materials | assemble engine-neutral material definitions |
+| Rigging | skeleton, weights and constraints |
+| Animation | create/retarget/validate animation clips |
+| LOD | generate and validate LOD chain |
+| Collision | generate and validate collision geometry |
+| Optimization | enforce platform/engine budgets |
+| Engine export | serialize to the selected engine adapter format |
+| Asset validation | technical, visual, provenance and budget gates |
 
-No 3D asset becomes release-ready until geometry, materials, UVs, scale, pivot, collision, LOD and license/provenance checks pass.
+## Job requirements
 
+The contract supports target engine/platform, polygon budget, texture resolution, LOD count, rigging/animation/collision/PBR requirements and export format.
 
-## General Asset Factory
+## Validation gates
 
-The 3D pipeline is a specialization of the canonical 10-stage Asset Factory. See `docs/ASSET-FACTORY.md` for the full asset lifecycle and supported asset classes.
+Release readiness can require:
+
+- mesh integrity and topology checks
+- UV validity
+- texture dimensions/color-space checks
+- PBR completeness
+- material references
+- scale/pivot checks
+- rig and weight integrity
+- animation integrity
+- LOD coverage
+- collision coverage
+- memory/file-size/draw-call budgets
+- engine import/export integrity
+- provenance and license metadata.
+
+## Engine adapters
+
+The pipeline remains engine-neutral and can target Unreal, Unity, Godot, Cocos Creator, Defold, Stride, MonoGame, Bevy, O3DE, HTML/Web and future adapters.
+
+## Relationship to Asset Factory
+
+The general Asset Factory remains:
+
+`Concept → Reference → Generation → Variation → Selection → Editing → Optimization → Metadata → Import → Engine Asset`
+
+The 3D branch expands the production portion into:
+
+`Text/Image/Reference → Generation → Mesh Processing → Topology → UV → Textures → PBR → Materials → Rigging → Animation → LOD → Collision → Optimization → Engine Export → Asset Validation`
+
+Thus 3D assets retain the general Factory's provenance and creative lineage while gaining production-specific geometry, material, animation and engine validation.
