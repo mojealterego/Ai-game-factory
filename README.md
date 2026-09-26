@@ -13,7 +13,7 @@ Premium Android-first command center for an engine-agnostic AI game production f
 - Fable-style living characters, memory and relationships
 - Ludo-style research/ideation and API/MCP adapter
 - Quantic Dream-inspired public narrative patterns: branching choices, consequences, character fate and cinematic flow
-- Asset Factory
+- Asset Factory (10-stage Concept → Reference → Generation → Variation → Selection → Editing → Optimization → Metadata → Import → Engine Asset pipeline for concept art, characters, environments, props, weapons, vehicles, UI, icons, textures, materials, sprites, backgrounds, VFX, thumbnails and promotional graphics)
 - Tripo-style 3D generation/processing pipeline
 - Unity AI adapter
 - Audio, music, speech and dubbing
@@ -60,6 +60,7 @@ The engine-neutral layer is now executable at the contract level:
 - [Reference capability matrix](docs/REFERENCE-MATRIX.md)
 - [Cinematic Narrative Engine](docs/CINEMATIC-NARRATIVE-ENGINE.md)
 - [AI Game Compiler](docs/AI-GAME-COMPILER.md)
+- [Asset Factory](docs/ASSET-FACTORY.md)
 - [3D Asset Factory](docs/3D-ASSET-FACTORY.md)
 - [Unity AI Adapter](docs/UNITY-AI-ADAPTER.md)
 - [Game Research Lab](docs/GAME-RESEARCH-LAB.md)
