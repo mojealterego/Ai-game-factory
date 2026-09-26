@@ -15,6 +15,13 @@ export interface BuildArtifact {
   downloadUri?: string;
   sha256?: string;
   verified: boolean;
+  format?: "apk" | "aab" | "web" | "windows" | "linux" | "archive" | "custom";
+  mimeType?: string;
+  sizeBytes?: number;
+  signed?: boolean;
+  evidence?: string[];
+  buildRunId?: string;
+  version?: string;
 }
 
 export interface BuildAdapter {
