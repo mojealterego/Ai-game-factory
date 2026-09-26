@@ -17,6 +17,7 @@ Premium Android-first command center for an engine-agnostic AI game production f
 - Tripo-style 3D generation/processing pipeline
 - Unity AI adapter
 - Audio / Dubbing Factory (music, soundtrack, ambient, SFX, footsteps, UI sounds, cinematic sound, voice generation, dubbing, lip-sync, dialogue timing, multilingual voice and capability-based provider routing)
+- AI Model Factory (cloud providers, generative-media providers, Hugging Face and local GGUF lifecycle/routing)
 - Local Models / GGUF
 - Hugging Face
 - Provider Router / model cascade
