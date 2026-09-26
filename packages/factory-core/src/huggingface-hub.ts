@@ -32,6 +32,7 @@ export interface HuggingFaceModelCard {
   baseModel?: string;
   description?: string;
   rawMarkdown?: string;
+  metadata?: Record<string, unknown>;
 }
 
 export interface HuggingFaceFile {
@@ -204,7 +205,7 @@ export async function executeHuggingFaceImport(
         kind: request.kind,
         runtime: request.target === "android" ? "local" : "hybrid",
         providerId: "local:gguf",
-        capabilities: [request.kind === "chat" ? "chat" : request.kind === "code" ? "code" : request.kind === "embedding" ? "embedding" : "multimodal"],
+        capabilities: [request.kind === "chat" ? "chat" : request.kind === "code" ? "code" : request.kind === "embedding" ? "embedding" : request.kind === "speech" ? "speech" : request.kind === "image" ? "image_generation" : request.kind === "video" ? "video_generation" : "multimodal"],
         quantization: context.quantization?.quantization ?? "unknown",
         format: "gguf",
         resources: {
