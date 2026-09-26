@@ -1,67 +1,69 @@
-# Cinematic Narrative Engine
+# Cinematic Narrative Studio
 
-## State model
+The AI GAME FACTORY narrative layer is a structured authoring and runtime system, not a text-only generator.
 
-Narrative state is a versioned graph:
+## Pipeline
 
-- world state
-- scene state
-- character state
-- relationship state
-- knowledge state
-- inventory/state variables
-- reputation
-- flags
-- timeline
-- unresolved threads
-- player decisions
-- consequence queue
+Story Bible -> World -> Characters -> Chapters -> Scenes -> Dialogue -> Choices -> Consequences -> Endings -> Story-to-Game
 
-## Runtime
+## Persistent state
 
-A scene contains entry conditions, actors, objectives, beats, dialogue, camera cues, interactions, QTE/timed decisions, exits and state mutations.
+The project model supports:
 
-Decision resolution supports:
+- persistent story memory
+- character-specific memory
+- relationship history and scores
+- world state, knowledge, inventory and flags
+- unresolved story threads
+- delayed and hidden consequences
+- versioned canon
 
-1. immediate consequences
-2. delayed consequences
-3. hidden consequences
-4. relationship changes
-5. world-state mutations
-6. character survival/fate changes
-7. future scene availability
-8. ending eligibility
+The Story Bible is authoritative. Generated content must be validated against canon before it is accepted.
 
-## Authoring tools
+## Cinematic interaction
 
-- node graph
-- flowchart
-- scene editor
-- character cards
-- relationship graph
-- timeline
-- choice editor
-- consequence preview
-- branch diff
-- continuity doctor
-- canon validator
-- ending simulator
+Scene authoring supports:
 
-## AI safeguards
+- cinematic camera cues
+- actor blocking
+- scene beats and timing
+- branching choices
+- QTE
+- timed choices
+- investigation and clue deduction
+- multiple endings
+- character fate and relationship changes
 
-The Story Bible is authoritative. Generated dialogue cannot silently mutate canon. Proposed mutations enter a validation queue.
+These are general, publicly documented interactive-narrative design patterns. The implementation does not reproduce proprietary source code, assets or unpublished technology.
 
-## Simulation
+## Narrative QA
 
-The Narrative Simulator can execute thousands of synthetic playthroughs to discover:
+narrativeQA() checks structural integrity and produces evidence:
 
-- dead branches
+- unknown character references
+- invalid timing
+- unreachable nodes
 - unreachable endings
-- contradictory state
-- missing variables
-- pacing problems
-- impossible choices
-- relationship discontinuities
-- excessive branch explosion
+- continuity issues
 
-Outputs are evidence artifacts, not claims of human playtest equivalence.
+The QA model is intentionally extensible for later simulation, contradiction detection, pacing analysis and branch-explosion analysis. Synthetic simulation evidence must not be represented as equivalent to human playtesting.
+
+## Selective regeneration
+
+selectiveRegenerationScope() lets the factory regenerate a targeted story object while preserving canon and dependencies by default.
+
+This prevents a local dialogue or scene revision from silently rewriting the entire story.
+
+## Media pipeline
+
+The narrative model can produce generation specifications for:
+
+- multilingual voice
+- music
+- cinematic/video
+
+Provider selection remains delegated to the Factory provider router.
+
+## Story -> Game
+
+compileStoryToGame() produces a deterministic manifest connecting narrative content to runtime capabilities such as narrative runtime, gameplay logic, code, audio, voice, video and QA.
