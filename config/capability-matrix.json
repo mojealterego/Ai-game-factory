@@ -78,7 +78,22 @@
         "sound_generator",
         "animation_generator",
         "material_generator",
-        "sentis"
+        "sentis",
+        "project_context",
+        "scene_graph",
+        "game_objects",
+        "components",
+        "packages",
+        "scripts",
+        "prefabs",
+        "terrain",
+        "code_agent",
+        "scene_agent",
+        "asset_generator",
+        "vfx_generator",
+        "ui_generator",
+        "reference_to_asset",
+        "build_adapter"
       ]
     }
   ],
