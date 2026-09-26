@@ -1,0 +1,23 @@
+name: Factory Core Typecheck
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "packages/factory-core/src/**"
+      - "package.json"
+      - "tsconfig.factory-core.json"
+      - ".github/workflows/factory-core-typecheck.yml"
+  workflow_dispatch:
+
+jobs:
+  typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - run: npm install --ignore-scripts
+      - run: npm run typecheck:factory-core
