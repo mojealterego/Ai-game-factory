@@ -13,8 +13,8 @@ export class FetchLudoTransport implements LudoTransportAdapter {
       if (!this.secrets) throw new Error("LUDO_SECRET_RESOLVER_REQUIRED");
       headers.authorization = "Bearer " + await this.secrets.resolve(config.apiKeyRef);
     }
-    const response = await fetch(new URL("/v1/" + request.capability, config.baseUrl), {
-      method: "POST", headers, body: JSON.stringify({ projectId: request.projectId, input: request.input })
+    const response = await fetch(new URL(config.baseUrl), {
+      method: "POST", headers, body: JSON.stringify({ capability: request.capability, projectId: request.projectId, input: request.input })
     });
     const text = await response.text();
     if (!response.ok) throw new Error("LUDO_HTTP_" + response.status + ":" + text.slice(0, 500));
