@@ -58,7 +58,7 @@ export const GAME_BUILDER_PROFILES: Record<GameBuilderId, GameBuilderProfile> = 
   couples_intimacy:{id:"couples_intimacy",name:"Couples & Intimacy Builder",description:"Adult relationship, romance and intimacy themes without explicit sexual content.",dimensions:["2D","2.5D","3D"],defaultEngines:["unity","godot","html5"],capabilities:[...shared,"narrative_runtime"],ageGate:"18+"},
   mature_18_plus:{id:"mature_18_plus",name:"Mature 18+ Builder",description:"Age-gated mature themes such as horror, crime, violence and dark narratives.",dimensions:["2D","2.5D","3D"],defaultEngines:["unreal","unity","godot"],capabilities:[...shared,"narrative_runtime"],ageGate:"18+"},
   casino_style_virtual:{id:"casino_style_virtual",name:"Casino-Style Virtual Builder",description:"Simulated casino-style mechanics for entertainment only.",dimensions:["2D","2.5D","3D"],defaultEngines:["unity","godot","html5"],capabilities:[...shared],virtualOnly:true,constraints:{realMoneyWagering:false,cashOut:false,monetaryStaking:false}},
-  custom:{id:"custom",name:"Custom Game Builder",description:"Configurable builder assembled from Game DNA and selected capabilities.",dimensions:["2D","2.5D","3D"],defaultEngines:["unreal","unity","godot","cocos","defold","stride","monogame","bevy","o3de","html5","custom"],capabilities:[...shared]}
+  custom:{id:"custom",name:"Custom Game Builder",description:"Configurable builder assembled from Game DNA and selected capabilities.",dimensions:["2D","2.5D","3D"],defaultEngines:["unreal","unity","godot","cocos","defold","stride","monogame","bevy","o3de","html5","renpy","custom"],capabilities:[...shared]}
 };
 
 export function getGameBuilderProfile(id: GameBuilderId): GameBuilderProfile { return GAME_BUILDER_PROFILES[id]; }
