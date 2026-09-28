@@ -128,7 +128,7 @@ private fun FactoryApp() {
                     agents = "READY",
                     qa = "NOT RUN",
                     artifact = "NONE",
-                    message = "Projekt "$name" utworzony."
+                    message = "Projekt \"$name\" utworzony."
                 )
                 showNewProject = false
             }
